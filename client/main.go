@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// 启动监听
-	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":8083")
+	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":8018")
 	if err != nil {
 		log.Println(err)
 		return
@@ -76,7 +76,7 @@ func httpClient(l *net.TCPListener) {
 // 1.处理本机的代理请求
 // 2.与server建立websocket连接
 func socks2ws(socks *net.TCPConn) {
-	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8082", Path: "/"}
+	u := url.URL{Scheme: "ws", Host: "149.28.34.65:8018", Path: "/"}
 	log.Printf("connecting to %s", u.String())
 
 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
