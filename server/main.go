@@ -15,9 +15,9 @@ func main() {
 
 func httpServer(w http.ResponseWriter, r *http.Request) {
 
-	ws, err := upgrader.Upgrade(w, r, nil)
+	ws, err := upGrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	WsHander(ws)
+	WsHandler(ws)
 }

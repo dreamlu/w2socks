@@ -24,7 +24,7 @@ func Handle(ws *websocket.Conn) {
 	}
 	log.Println(b)
 
-	client.Write([]byte{0x05, 0x00})
+	_, _ = client.Write([]byte{0x05, 0x00})
 	log.Println(b)
 
 	// 获取真正的远程服务的地址
@@ -84,13 +84,13 @@ func Handle(ws *websocket.Conn) {
 	// Conn被关闭时直接清除所有数据 不管没有发送的数据
 	_ = server.SetLinger(0)
 	// 响应客户端连接成功
-	client.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
+	_, _ = client.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 	// 响应客户端连接成功
 	//server.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 	// 进行转发
 	// 从server接收数据,返回本地
 	go io.Copy(server, client)
-	io.Copy(client,server)
+	io.Copy(client, server)
 	//go func() {
 	//
 	//	err := send(client, server)

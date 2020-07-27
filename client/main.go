@@ -33,7 +33,6 @@ func main() {
 }
 
 // client request ws server
-
 func httpClient(l *net.TCPListener) {
 
 	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8082", Path: "/"}
