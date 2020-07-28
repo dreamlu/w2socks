@@ -50,7 +50,7 @@ if [[ ${devMode} = 'dev' ]]; then
 #        dor="${dor} ${module}"
         echo "工作目录: ${workDir}"
         echo -e "\n模块: ""${module} 开始构建docker"
-        cd "${workDir}"/"${module}" && ./docker.sh -v w2sockets-"${module}"
+        cd "${workDir}"/"${module}" && ./docker.sh -v w2socks-"${module}"
     done
 #    dor="${dor}\"}"
 #    echo "构建命令:${dor}"

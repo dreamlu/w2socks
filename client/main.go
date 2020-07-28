@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/dreamlu/w2sockets/client/handle"
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
+	"fyne.io/fyne/widget"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -11,72 +13,89 @@ import (
 )
 
 func main() {
+	app := app.New()
+	w := app.NewWindow("w2socks")
+	w.Resize(fyne.NewSize(280, 300))
+
+	comSize := fyne.NewSize(100, 20)
+
+	ipEntry := widget.NewEntry()
+	ipEntry.SetPlaceHolder("ip:port                       ")
+	ipEntry.Resize(comSize)
+
+	lpEntry := widget.NewEntry()
+	lpEntry.Resize(comSize)
+
+	form := widget.NewForm(
+		widget.NewFormItem("ip addr:", ipEntry),
+		widget.NewFormItem("local port:", lpEntry),
+	)
+
+	form.CancelText = "cancel"
+	form.SubmitText = "submit"
+	form.OnCancel = func() {
+		log.Println("取消")
+	}
+	form.OnSubmit = func() {
+		log.Println("提交")
+		//fyne.CurrentApp().SendNotification(&fyne.Notification{
+		//	Title:   "form submit",
+		//	Content: ipEntry.Text,
+		//})
+		log.Println(ipEntry.Text)
+		// 退出旧携程
+		if online > 0 {
+			quit <- 1
+		}
+		go client(ipEntry.Text, lpEntry.Text)
+		online++
+	}
+
+	content := widget.NewVBox(
+		widget.NewHBox(
+			//widget.NewLabel("ip addr:"),
+			form,
+		),
+	)
+	w.SetContent(content)
+	w.ShowAndRun()
+
+}
+
+var (
+	online int
+	quit   = make(chan byte)
+)
+
+// client
+func client(ipAddr, localPort string) {
 	// 启动监听
-	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":8018")
+	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":"+localPort)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	l, err := net.ListenTCP("tcp", LocalListenAddr)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
 	}
 	defer l.Close()
 
-	// ws client
-	//httpClient(l)
-
 	for {
-		conn, _ := l.Accept()
-		go socks2ws(conn.(*net.TCPConn))
-	}
-}
-
-// client request ws server
-
-func httpClient(l *net.TCPListener) {
-
-	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8082", Path: "/"}
-	log.Printf("connecting to %s", u.String())
-
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	if err != nil {
-		log.Fatal("dial:", err)
-	}
-	defer c.Close()
-
-	// 监听对于本机的请求
-	for {
-		// 发送数据
-		client, err := l.AcceptTCP()
-		if err != nil {
-			log.Println(err)
-			continue
+		select {
+		case <-quit:
+			return
+		default:
+			conn, _ := l.Accept()
+			go socks2ws(conn.(*net.TCPConn), ipAddr)
 		}
-
-		// localConn被关闭时直接清除所有数据 不管没有发送的数据
-		_ = client.SetLinger(0)
-		// 1.处理本机的代理请求
-		// 2.与server建立websocket连接
-		// 3.异步发送数据段
-		go func() {
-			defer client.Close()
-			go func() {
-				err := handle.Receive(client, c)
-				if err != nil {
-					// 在 copy 的过程中可能会存在网络超时等 error 被 return，只要有一个发生了错误就退出本次工作
-					client.Close()
-				}
-			}()
-			handle.Send(client, c)
-		}()
 	}
 }
 
 // 1.处理本机的代理请求
 // 2.与server建立websocket连接
-func socks2ws(socks *net.TCPConn) {
-	u := url.URL{Scheme: "ws", Host: "149.28.34.65:8018", Path: "/"}
+func socks2ws(socks *net.TCPConn, ipAddr string) {
+	u := url.URL{Scheme: "ws", Host: ipAddr, Path: "/"} // 149.28.34.65:8018
 	log.Printf("connecting to %s", u.String())
 
 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
