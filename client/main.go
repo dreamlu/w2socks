@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
+	"github.com/dreamlu/w2socks/client/util/notify"
 	"log"
 	"regexp"
 	"strconv"
@@ -33,9 +34,9 @@ func window() {
 	comSize := fyne.NewSize(100, 20)
 
 	// 服务端ip和端口
-	serviceIpPortEntry := widget.NewEntry()
-	serviceIpPortEntry.SetPlaceHolder("ip:port")
-	serviceIpPortEntry.Resize(comSize)
+	serverEntry := widget.NewEntry()
+	serverEntry.SetPlaceHolder("ip:port")
+	serverEntry.Resize(comSize)
 
 	// 本地端口号
 	localPortEntry := widget.NewEntry()
@@ -43,7 +44,7 @@ func window() {
 	localPortEntry.Resize(comSize)
 
 	form := widget.NewForm(
-		widget.NewFormItem("server:", serviceIpPortEntry),
+		widget.NewFormItem("server:", serverEntry),
 		widget.NewFormItem("local:", localPortEntry),
 	)
 
@@ -51,13 +52,17 @@ func window() {
 	form.SubmitText = "connect"
 	// 取消操作
 	form.OnCancel = func() {
-		SysNotify("notify", "server is disconnected")
-		log.Println("取消")
+		// 退出旧携程
+		if core.Online > 0 {
+			core.Quit <- 1
+			log.Println("取消")
+			notify.SysNotify("notify", "server is disconnected")
+		}
 	}
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
-		ipAddr := serviceIpPortEntry.Text
+		ipAddr := serverEntry.Text
 		log.Println("用户输入: " + ipAddr)
 
 		// ip地址是否正确
@@ -77,7 +82,7 @@ func window() {
 		go core.Core(ipAddr, localPortEntry.Text)
 		core.Online++
 		// 系统通知
-		SysNotify("w2socks", "success to connect "+ipAddr)
+		notify.SysNotify("w2socks", "success to connect "+ipAddr)
 	}
 
 	// 窗体
@@ -95,20 +100,20 @@ func window() {
 func Check(ipAddr string) bool {
 	if !strings.Contains(ipAddr, ":") {
 		fmt.Println("ip和端口格式不正确")
-		SysNotify("warn!!", "ip and port format is incorrect")
+		notify.SysNotify("warn!!", "ip and port format is incorrect")
 		return false
 	}
 	ip := strings.Split(ipAddr, ":")
 	ipv4 := ip[0]
 	if !CheckIp(ipv4) {
 		fmt.Println("ip地址格式不正确")
-		SysNotify("warn!!", "ip地址格式不正确")
+		notify.SysNotify("warn!!", "ip地址格式不正确")
 		return false
 	}
 	port := ip[1]
 	if !CheckPort(port) {
 		fmt.Println("")
-		SysNotify("warn!!", "ip端口不正确")
+		notify.SysNotify("warn!!", "ip端口不正确")
 		return false
 	}
 	return true
