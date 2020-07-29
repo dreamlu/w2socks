@@ -7,6 +7,7 @@ import (
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/util/ip"
+	"github.com/dreamlu/w2socks/client/util/notify"
 	"log"
 )
 
@@ -31,9 +32,9 @@ func window() {
 	comSize := fyne.NewSize(100, 20)
 
 	// 服务端ip和端口
-	serviceIpPortEntry := widget.NewEntry()
-	serviceIpPortEntry.SetPlaceHolder("ip:port")
-	serviceIpPortEntry.Resize(comSize)
+	serverEntry := widget.NewEntry()
+	serverEntry.SetPlaceHolder("ip:port")
+	serverEntry.Resize(comSize)
 
 	// 本地端口号
 	localPortEntry := widget.NewEntry()
@@ -41,7 +42,7 @@ func window() {
 	localPortEntry.Resize(comSize)
 
 	form := widget.NewForm(
-		widget.NewFormItem("server:", serviceIpPortEntry),
+		widget.NewFormItem("server:", serverEntry),
 		widget.NewFormItem("local:", localPortEntry),
 	)
 
@@ -49,25 +50,29 @@ func window() {
 	form.SubmitText = "connect"
 	// 取消操作
 	form.OnCancel = func() {
-		SysNotify("notify", "server is disconnected")
-		log.Println("取消")
+		// 退出旧携程
+		if core.Online > 0 {
+			core.Quit <- 1
+			log.Println("取消")
+			notify.SysNotify("notify", "server is disconnected")
+		}
 	}
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
-		ipAddr := serviceIpPortEntry.Text
+		ipAddr := serverEntry.Text
 		log.Println("用户输入: " + ipAddr)
 
 		// ip地址是否正确
 		msg, ok := ip.Check(ipAddr)
 		if !ok {
-			SysNotify("warn!!", msg)
+			notify.SysNotify("warn!!", msg)
 			return
 		}
 
 		//本地端口是否正确
 		if !ip.CheckPort(localPortEntry.Text) {
-			SysNotify("warn!!", "Incorrect local port")
+			notify.SysNotify("warn!!", "Incorrect local port")
 			return
 		}
 
@@ -78,7 +83,7 @@ func window() {
 		go core.Core(ipAddr, localPortEntry.Text)
 		core.Online++
 		// 系统通知
-		SysNotify("w2socks", "success to connect "+ipAddr)
+		notify.SysNotify("w2socks", "success to connect "+ipAddr)
 	}
 
 	// 窗体
