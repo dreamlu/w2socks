@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
@@ -9,45 +8,53 @@ import (
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/util/ip"
 	"github.com/dreamlu/w2socks/client/util/notify"
-	"github.com/kardianos/service"
+	"github.com/getlantern/systray"
 	"log"
 )
 
-var logger service.Logger
+// 开发环境: ubuntu
+// 安装依赖: sudo apt-get install libgl1-mesa-dev xorg-dev libgtk-3-dev libappindicator3-dev -y
+
+var (
+	w fyne.Window
+)
 
 // 运行方式:
 // 1.命令行
 // 2.GUI
 func main() {
 
-	window()
+	go systray.Run(onReady, nil)
+	w = window()
+	//w.SetOnClosed(func() {
+	//	w.Hide()
+	//	w.Show()
+	//	systray.Run(onReady, nil)
+	//})
+	w.ShowAndRun()
+}
 
-	svcConfig := &service.Config{
-		Name:        "w2socks-program",
-		DisplayName: "w2socks",
-		Description: "This is a proxy Go service.",
-	}
-
-	prg := &BackstageProgram{}
-	s, err := service.New(prg, svcConfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-	logger, err = s.Logger(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = s.Run()
-	if err != nil {
-		err = logger.Error(err)
-		if err != nil {
-			fmt.Println(err.Error())
+func onReady() {
+	systray.SetTemplateIcon(data.LogoData, data.LogoData)
+	//systray.SetTitle("w2socks")
+	systray.SetTooltip("w2socks")
+	mUrl := systray.AddMenuItem("恢复", "my home")
+	mQuit := systray.AddMenuItem("退出", "Quit the whole app")
+	//systray.AddSeparator() // 分隔线
+	for {
+		select {
+		case <-mUrl.ClickedCh:
+			w.Show()
+			//o <- 0
+		case <-mQuit.ClickedCh:
+			//o <- 1
+			return
 		}
 	}
 }
 
 // window
-func window() {
+func window() fyne.Window {
 	// 主程序
 	majorApp := app.New()
 
@@ -112,6 +119,7 @@ func window() {
 		core.Online++
 		// 系统通知
 		notify.SysNotify("w2socks", "success to connect "+ipAddr)
+		w.Hide()
 	}
 
 	// 窗体
@@ -123,24 +131,6 @@ func window() {
 		),
 	)
 	mainWindow.SetContent(content)
-	mainWindow.ShowAndRun()
-}
-
-// 后台
-type BackstageProgram struct {
-}
-
-func (p *BackstageProgram) Start(s service.Service) error {
-	// Start should not block. Do the actual work async.
-	go p.run()
-	return nil
-}
-
-func (p *BackstageProgram) run() {
-	// Do work here
-}
-
-func (p *BackstageProgram) Stop(s service.Service) error {
-	// Stop should not block. Return with a few seconds.
-	return nil
+	//mainWindow.ShowAndRun()
+	return mainWindow
 }
