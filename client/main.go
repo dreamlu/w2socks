@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/core"
+	"github.com/dreamlu/w2socks/client/data"
 	"log"
 )
 
@@ -18,7 +19,7 @@ func main() {
 // window
 func window() {
 	app := app.New()
-	//app.SetIcon(data.Logo())
+	app.SetIcon(data.Logo())
 	w := app.NewWindow("w2socks")
 	w.Resize(fyne.NewSize(280, 300))
 
