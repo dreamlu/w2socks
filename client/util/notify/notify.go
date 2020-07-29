@@ -9,6 +9,14 @@ import (
 
 // 全局通知方法
 
+// 系统通知
+func SysNotify(title, content string) {
+	fyne.CurrentApp().SendNotification(&fyne.Notification{
+		Title:   title,
+		Content: content,
+	})
+}
+
 // 弹窗
 func PopUps(app fyne.App, title, content string) {
 	w := app.NewWindow(title)
@@ -27,19 +35,7 @@ func PopUpsWarn(app fyne.App, content string) {
 	PopUps(app, "Warn!!", content)
 }
 
-// 弹窗
-func PopSplashWarn(w fyne.Window, content string) {
-	PopSplashNotify(w, "Warn!!", content)
-}
-
-// 系统通知
-func SysNotify(title, content string) {
-	fyne.CurrentApp().SendNotification(&fyne.Notification{
-		Title:   title,
-		Content: content,
-	})
-}
-
+// 自动关闭的弹窗
 func PopSplashNotify(w fyne.Window, title, content string) {
 	drv := fyne.CurrentApp().Driver()
 	if drv, ok := drv.(desktop.Driver); ok {

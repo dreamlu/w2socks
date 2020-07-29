@@ -1,17 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/util/notify"
+	"github.com/dreamlu/w2socks/client/util/ip"
 	"log"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 // 运行方式:
@@ -25,6 +22,7 @@ func main() {
 func window() {
 	// 主程序
 	majorApp := app.New()
+
 	// logo
 	majorApp.SetIcon(data.Logo())
 	// 主窗体
@@ -66,12 +64,15 @@ func window() {
 		log.Println("用户输入: " + ipAddr)
 
 		// ip地址是否正确
-		if !Check(ipAddr) {
+		msg, ok := ip.Check(ipAddr)
+		if !ok {
+			SysNotify("warn!!", msg)
 			return
 		}
 
 		//本地端口是否正确
-		if !CheckPort(localPortEntry.Text) {
+		if !ip.CheckPort(localPortEntry.Text) {
+			SysNotify("warn!!", "Incorrect local port")
 			return
 		}
 
