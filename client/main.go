@@ -1,16 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
+	"github.com/dreamlu/w2socks/client/util/ip"
 	"log"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 // 运行方式:
@@ -24,6 +21,7 @@ func main() {
 func window() {
 	// 主程序
 	majorApp := app.New()
+
 	// logo
 	majorApp.SetIcon(data.Logo())
 	// 主窗体
@@ -61,12 +59,15 @@ func window() {
 		log.Println("用户输入: " + ipAddr)
 
 		// ip地址是否正确
-		if !Check(ipAddr) {
+		msg, ok := ip.Check(ipAddr)
+		if !ok {
+			SysNotify("warn!!", msg)
 			return
 		}
 
 		//本地端口是否正确
-		if !CheckPort(localPortEntry.Text) {
+		if !ip.CheckPort(localPortEntry.Text) {
+			SysNotify("warn!!", "Incorrect local port")
 			return
 		}
 
@@ -90,44 +91,4 @@ func window() {
 	)
 	mainWindow.SetContent(content)
 	mainWindow.ShowAndRun()
-}
-
-func Check(ipAddr string) bool {
-	if !strings.Contains(ipAddr, ":") {
-		fmt.Println("ip和端口格式不正确")
-		SysNotify("warn!!", "ip and port format is incorrect")
-		return false
-	}
-	ip := strings.Split(ipAddr, ":")
-	ipv4 := ip[0]
-	if !CheckIp(ipv4) {
-		fmt.Println("ip地址格式不正确")
-		SysNotify("warn!!", "ip地址格式不正确")
-		return false
-	}
-	port := ip[1]
-	if !CheckPort(port) {
-		fmt.Println("")
-		SysNotify("warn!!", "ip端口不正确")
-		return false
-	}
-	return true
-}
-
-// 检验ip地址
-func CheckIp(ip string) bool {
-	addr := strings.Trim(ip, " ")
-	regStr := `^(([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`
-	if match, _ := regexp.MatchString(regStr, addr); match {
-		return true
-	}
-	return false
-}
-
-func CheckPort(port string) bool {
-	portNum, err := strconv.Atoi(port)
-	if err != nil || portNum >= 65536 || portNum <= 0 {
-		return false
-	}
-	return true
 }
