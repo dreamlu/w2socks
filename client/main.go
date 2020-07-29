@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
@@ -8,14 +9,41 @@ import (
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/util/ip"
 	"github.com/dreamlu/w2socks/client/util/notify"
+	"github.com/kardianos/service"
 	"log"
 )
+
+var logger service.Logger
 
 // 运行方式:
 // 1.命令行
 // 2.GUI
 func main() {
+
 	window()
+
+	svcConfig := &service.Config{
+		Name:        "w2socks-program",
+		DisplayName: "w2socks",
+		Description: "This is a proxy Go service.",
+	}
+
+	prg := &BackstageProgram{}
+	s, err := service.New(prg, svcConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	logger, err = s.Logger(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = s.Run()
+	if err != nil {
+		err = logger.Error(err)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 }
 
 // window
@@ -96,4 +124,23 @@ func window() {
 	)
 	mainWindow.SetContent(content)
 	mainWindow.ShowAndRun()
+}
+
+// 后台
+type BackstageProgram struct {
+}
+
+func (p *BackstageProgram) Start(s service.Service) error {
+	// Start should not block. Do the actual work async.
+	go p.run()
+	return nil
+}
+
+func (p *BackstageProgram) run() {
+	// Do work here
+}
+
+func (p *BackstageProgram) Stop(s service.Service) error {
+	// Stop should not block. Return with a few seconds.
+	return nil
 }
