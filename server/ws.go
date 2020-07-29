@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// Configure the upgrader
-var upgrader = websocket.Upgrader{
+// Configure the upGrader
+var upGrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
@@ -15,7 +15,7 @@ var upgrader = websocket.Upgrader{
 
 // 消息读取
 // 开启不同进程代表对应的客户端通信
-func WsHander(ws *websocket.Conn) {
+func WsHandler(ws *websocket.Conn) {
 
 	defer ws.Close()
 	//消息读取,每个客户端数据
