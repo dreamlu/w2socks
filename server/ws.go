@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dreamlu/w2sockets/server/handle"
+	"github.com/dreamlu/w2socks/server/handle"
 	"github.com/gorilla/websocket"
 	"net/http"
 )
