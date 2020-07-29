@@ -1,5 +1,8 @@
-module github.com/dreamlu/w2sockets
+module github.com/dreamlu/w2socks
 
 go 1.14
 
-require github.com/gorilla/websocket v1.4.2
+require (
+	fyne.io/fyne v1.3.2
+	github.com/gorilla/websocket v1.4.2
+)
