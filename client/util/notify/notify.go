@@ -2,57 +2,16 @@ package notify
 
 import (
 	"fyne.io/fyne"
-	"fyne.io/fyne/driver/desktop"
-	"fyne.io/fyne/widget"
-	"time"
+	"log"
 )
 
 // 全局通知方法
 
 // 系统通知
 func SysNotify(title, content string) {
+	log.Println(content)
 	fyne.CurrentApp().SendNotification(&fyne.Notification{
 		Title:   title,
 		Content: content,
 	})
-}
-
-// 弹窗
-func PopUps(app fyne.App, title, content string) {
-	w := app.NewWindow(title)
-
-	w.SetContent(widget.NewVBox(
-		widget.NewLabel(content),
-		widget.NewButton("Quit", func() {
-			w.Close()
-		}),
-	))
-	w.Show()
-}
-
-// 弹窗
-func PopUpsWarn(app fyne.App, content string) {
-	PopUps(app, "Warn!!", content)
-}
-
-// 自动关闭的弹窗
-func PopSplashNotify(w fyne.Window, title, content string) {
-	drv := fyne.CurrentApp().Driver()
-	if drv, ok := drv.(desktop.Driver); ok {
-		w.SetContent(
-			widget.NewVBox(
-				widget.NewButton(title, func() {
-					w := drv.CreateSplashWindow()
-					w.SetContent(widget.NewLabelWithStyle(content,
-						fyne.TextAlignCenter, fyne.TextStyle{Bold: true}))
-					w.Show()
-
-					go func() {
-						time.Sleep(time.Second * 3)
-						w.Close()
-					}()
-				}),
-			),
-		)
-	}
 }
