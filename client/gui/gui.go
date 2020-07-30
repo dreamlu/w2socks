@@ -29,7 +29,7 @@ func Gui() fyne.Window {
 	conf := data.GetConfig()
 	for _, v := range conf {
 		infos.Children = append(infos.Children, canvas.NewLine(color.White))
-		infos.Children = append(infos.Children, NewSelectClick(v.Name, color.White))
+		infos.Children = append(infos.Children, NewSelectClickText(v.Name, color.White))
 	}
 	infos.Children = append(infos.Children, canvas.NewLine(color.White))
 
