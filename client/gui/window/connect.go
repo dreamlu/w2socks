@@ -1,4 +1,4 @@
-package ctrl
+package window
 
 import (
 	"github.com/dreamlu/w2socks/client/core"

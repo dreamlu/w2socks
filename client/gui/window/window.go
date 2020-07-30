@@ -3,7 +3,6 @@ package window
 import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
-	"github.com/dreamlu/w2socks/client/gui/ctrl"
 	"github.com/dreamlu/w2socks/client/util/notify"
 	"log"
 )
@@ -35,7 +34,7 @@ func Window() fyne.Window {
 
 	// 取消操作
 	form.OnCancel = func() {
-		if ctrl.Disconnect() {
+		if Disconnect() {
 			notify.SysNotify("notify", "server is disconnected")
 		}
 		w.Close()
@@ -44,7 +43,7 @@ func Window() fyne.Window {
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
-		b := ctrl.Connect(serverEntry.Text, localPortEntry.Text)
+		b := Connect(serverEntry.Text, localPortEntry.Text)
 		if !b {
 			return
 		}
