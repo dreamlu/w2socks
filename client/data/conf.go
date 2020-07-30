@@ -20,7 +20,7 @@ func GetConfig() []*Config {
 	//下面使用的是相对路径，config.json文件和main.go文件处于同一目录下
 	err := Read(Path, &conf)
 	if err != nil {
-		panic(err)
+		return conf
 	}
 	return conf
 }
@@ -68,6 +68,7 @@ func Check(filename string) {
 			if err != nil {
 				fmt.Printf("[error!][%v]\n", err)
 			}
+			file.Close()
 		}
 	}
 }
