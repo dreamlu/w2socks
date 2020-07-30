@@ -4,10 +4,9 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
-	"github.com/dreamlu/w2socks/client/core"
+	"github.com/dreamlu/w2socks/client/ctrl"
 	"github.com/dreamlu/w2socks/client/data"
-	"github.com/dreamlu/w2socks/client/util/ip"
-	"github.com/dreamlu/w2socks/client/util/notify"
+	"github.com/dreamlu/w2socks/client/gui"
 	"github.com/getlantern/systray"
 	"log"
 )
@@ -16,16 +15,25 @@ import (
 // 安装依赖: sudo apt-get install libgl1-mesa-dev xorg-dev libgtk-3-dev libappindicator3-dev -y
 
 var (
-	w fyne.Window
+	w        fyne.Window
+	majorApp fyne.App
 )
 
 // 运行方式:
 // 1.命令行
 // 2.GUI
 func main() {
+	// 主程序
+	majorApp = app.New()
 
-	go systray.Run(onReady, nil)
+	// logo
+	majorApp.SetIcon(data.Logo())
+
+	w1 := mainForm()
+	w1.Show()
+
 	w = window()
+	go systray.Run(onReady, nil)
 	//w.SetOnClosed(func() {
 	//	w.Hide()
 	//	w.Show()
@@ -34,10 +42,12 @@ func main() {
 	w.ShowAndRun()
 }
 
+// 驻后台
 func onReady() {
 	systray.SetTemplateIcon(data.LogoData, data.LogoData)
 	//systray.SetTitle("w2socks")
 	systray.SetTooltip("w2socks")
+	// 托盘菜单
 	mUrl := systray.AddMenuItem("恢复", "my home")
 	mQuit := systray.AddMenuItem("退出", "Quit the whole app")
 	//systray.AddSeparator() // 分隔线
@@ -53,17 +63,31 @@ func onReady() {
 	}
 }
 
-// window
+// 主窗体
+func mainForm() fyne.Window {
+	addWindow := majorApp.NewWindow("w2socks")
+
+	addWindow.Resize(fyne.NewSize(280, 300))
+
+	// 纵向列表
+	infos := widget.NewVBox()
+
+	conf := data.GetConfig()
+	infos.Children = append(infos.Children, widget.NewLabel(conf.Name))
+
+	list := widget.NewVScrollContainer(infos)
+	list.Resize(fyne.NewSize(130, 200))
+
+	addWindow.SetMainMenu(gui.MainMenu())
+	addWindow.SetContent(widget.NewVBox(infos))
+	return addWindow
+}
+
+// 连接窗体
 func window() fyne.Window {
-	// 主程序
-	majorApp := app.New()
-
-	// logo
-	majorApp.SetIcon(data.Logo())
 	// 主窗体
-	mainWindow := majorApp.NewWindow("w2socks")
+	mainWindow := majorApp.NewWindow("add new conn info")
 	mainWindow.Resize(fyne.NewSize(280, 300))
-
 	comSize := fyne.NewSize(100, 20)
 
 	// 服务端ip和端口
@@ -83,44 +107,22 @@ func window() fyne.Window {
 
 	form.CancelText = "disconnect"
 	form.SubmitText = "connect"
+
 	// 取消操作
 	form.OnCancel = func() {
-		// 退出旧携程
-		if core.Online > 0 {
-			core.Quit <- 1
-			log.Println("取消")
-			notify.SysNotify("notify", "server is disconnected")
-		}
+		ctrl.Disconnect()
 	}
+
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
-		ipAddr := serverEntry.Text
-		log.Println("用户输入: " + ipAddr)
-
-		// ip地址是否正确
-		msg, ok := ip.Check(ipAddr)
-		if !ok {
-			notify.SysNotify("warn!!", msg)
-			return
-		}
-
-		//本地端口是否正确
-		if !ip.CheckPort(localPortEntry.Text) {
-			notify.SysNotify("warn!!", "Incorrect local port")
-			return
-		}
-
-		// 退出旧携程
-		if core.Online > 0 {
-			core.Quit <- 1
-		}
-		go core.Core(ipAddr, localPortEntry.Text)
-		core.Online++
-		// 系统通知
-		notify.SysNotify("w2socks", "success to connect "+ipAddr)
+		ctrl.Connect(serverEntry.Text, localPortEntry.Text)
 		w.Hide()
 	}
+	//form.OnSubmit = func() {
+	//	log.Println("提交")
+	//	ctrl.ConnectAndCall(serverEntry.Text, localPortEntry.Text, w.Hide)
+	//}
 
 	// 窗体
 	content := widget.NewVBox(
