@@ -12,8 +12,8 @@ type Config struct {
 	LocalPort    string `json:"local_port"`
 }
 
-func GetConfig() Config {
-	conf := Config{}
+func GetConfig() []*Config {
+	var conf []*Config
 	//下面使用的是相对路径，config.json文件和main.go文件处于同一目录下
 	err := Read("./config.json", &conf)
 	if err != nil {

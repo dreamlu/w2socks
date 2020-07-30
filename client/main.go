@@ -73,7 +73,9 @@ func mainForm() fyne.Window {
 	infos := widget.NewVBox()
 
 	conf := data.GetConfig()
-	infos.Children = append(infos.Children, widget.NewLabel(conf.Name))
+	for _, v := range conf {
+		infos.Children = append(infos.Children, widget.NewLabel(v.Name))
+	}
 
 	list := widget.NewVScrollContainer(infos)
 	list.Resize(fyne.NewSize(130, 200))
