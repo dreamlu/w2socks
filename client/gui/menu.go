@@ -2,8 +2,10 @@ package gui
 
 import (
 	"fyne.io/fyne"
+	"github.com/dreamlu/w2socks/client/gui/connect"
 )
 
+// 主窗口
 func MainMenu() *fyne.MainMenu {
 	// file
 	newItem := fyne.NewMenuItem("Import", func() {
@@ -12,9 +14,6 @@ func MainMenu() *fyne.MainMenu {
 	})
 
 	// Connect
-	addItom := fyne.NewMenuItem("Add", func() {
-
-	})
 	editItom := fyne.NewMenuItem("Edit", func() {
 
 	})
@@ -29,8 +28,11 @@ func MainMenu() *fyne.MainMenu {
 	mainMenu := fyne.NewMainMenu(
 		// a quit item will be appended to our first mainMenu
 		fyne.NewMenu("File", newItem, exportItem),
-		fyne.NewMenu("Connect", addItom, editItom, delItom),
+		fyne.NewMenu("Connect", connect.AddItem(), editItom, delItom),
 		helpMenu,
+		fyne.NewMenu("Back", fyne.NewMenuItem("back", func() {
+			G.Hide()
+		})),
 	)
 
 	return mainMenu
