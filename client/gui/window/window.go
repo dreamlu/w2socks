@@ -9,19 +9,27 @@ import (
 
 // 通用window
 // 编辑/添加连接窗体
-func Window() fyne.Window {
+func Window(ipAddr, port string) fyne.Window {
 	w := fyne.CurrentApp().NewWindow("connect content")
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
 
 	// 服务端ip和端口
 	serverEntry := widget.NewEntry()
-	serverEntry.SetPlaceHolder("ip:port")
+	if ipAddr == "" {
+		serverEntry.SetPlaceHolder("ip:port")
+	} else {
+		serverEntry.Text = ipAddr
+	}
 	serverEntry.Resize(comSize)
 
 	// 本地端口号
 	localPortEntry := widget.NewEntry()
-	localPortEntry.SetPlaceHolder("port")
+	if port == "" {
+		localPortEntry.SetPlaceHolder("port")
+	} else {
+		localPortEntry.Text = port
+	}
 	localPortEntry.Resize(comSize)
 
 	form := widget.NewForm(

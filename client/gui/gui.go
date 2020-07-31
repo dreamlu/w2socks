@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/canvas"
@@ -29,7 +30,11 @@ func Gui() fyne.Window {
 	conf := data.GetConfig()
 	for _, v := range conf {
 		infos.Children = append(infos.Children, canvas.NewLine(color.White))
-		infos.Children = append(infos.Children, NewSelectClickText(v.Name, color.White))
+		text := NewSelectClickText(fmt.Sprintf("%s [%s,%s]", v.Name, v.ServerIpAddr, v.LocalPort), color.White)
+		text.ServerIpAddr = v.ServerIpAddr
+		text.LocalPort = v.LocalPort
+		infos.Children = append(infos.Children, text)
+
 	}
 	infos.Children = append(infos.Children, canvas.NewLine(color.White))
 

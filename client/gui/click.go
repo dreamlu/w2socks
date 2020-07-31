@@ -10,6 +10,8 @@ import (
 
 type SelectClickText struct {
 	widget.Label
+	ServerIpAddr string
+	LocalPort    string
 }
 
 func NewSelectClickText(content string, c color.Color) *SelectClickText {
@@ -24,18 +26,8 @@ func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
 	fmt.Println("right click at", e)
-
-	addItem := connect.AddItem()
-	editItem := connect.EditItem()
-	delItem := connect.DelItem()
-
-	var menu = fyne.NewMenu("", addItem, editItem, delItem)
-
-	entryPos := fyne.CurrentApp().Driver().AbsolutePositionForObject(c)
-	popUpPos := entryPos.Add(fyne.NewPos(e.Position.X, e.Position.Y))
-	d := fyne.CurrentApp().Driver().CanvasForObject(c)
-
-	widget.ShowPopUpMenuAtPosition(menu, d, popUpPos)
+	var menu = fyne.NewMenu("", connect.AddItem(), connect.EditItem(c.ServerIpAddr, c.LocalPort), connect.DelItem())
+	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }
 
 func (c *SelectClickText) DoubleTapped(e *fyne.PointEvent) {

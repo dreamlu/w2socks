@@ -8,7 +8,7 @@ import (
 // 添加逻辑
 func AddItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Add", func() {
-		w := window.Window()
+		w := window.Window("", "")
 		w.Show()
 	})
 }
