@@ -5,10 +5,15 @@ import (
 	"github.com/dreamlu/w2socks/client/gui/window"
 )
 
+var (
+	SerIpAddr = ""
+	LocalPort = ""
+)
+
 // 编辑逻辑
-func EditItem(ipAddr, port string) *fyne.MenuItem {
+func EditItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Edit", func() {
-		w := window.Window(ipAddr, port)
+		w := window.Window(SerIpAddr, LocalPort)
 		w.Show()
 	})
 }

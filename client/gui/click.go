@@ -22,11 +22,15 @@ func NewSelectClickText(content string, c color.Color) *SelectClickText {
 
 func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
 	fmt.Println("left click at", e)
+	connect.SerIpAddr = c.ServerIpAddr
+	connect.LocalPort = c.LocalPort
 }
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
 	fmt.Println("right click at", e)
-	var menu = fyne.NewMenu("", connect.AddItem(), connect.EditItem(c.ServerIpAddr, c.LocalPort), connect.DelItem())
+	connect.SerIpAddr = c.ServerIpAddr
+	connect.LocalPort = c.LocalPort
+	var menu = fyne.NewMenu("", connect.AddItem(), connect.EditItem(), connect.DelItem())
 	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }
 
