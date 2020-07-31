@@ -43,9 +43,9 @@ func Gui() fyne.Window {
 	// 主菜单
 	addWindow.SetMainMenu(MainMenu())
 	// 布局
-	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), Toolbar())
+	//top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), Toolbar())
 	bom := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), list.Content)
-	oth := fyne.NewContainerWithLayout(layout.NewVBoxLayout())
-	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), top, bom, oth))
+	//oth := fyne.NewContainerWithLayout(layout.NewVBoxLayout())
+	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), bom))
 	return addWindow
 }

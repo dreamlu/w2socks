@@ -31,7 +31,7 @@ func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
 	connect.Name = c.Name
 	connect.SerIpAddr = c.ServerIpAddr
 	connect.LocalPort = c.LocalPort
-	var menu = fyne.NewMenu("", connect.AddItem(), connect.EditItem(), connect.DelItem())
+	var menu = fyne.NewMenu("", connect.ConnItem(), connect.AddItem(), connect.EditItem(), connect.DelItem())
 	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }
 
