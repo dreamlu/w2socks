@@ -6,42 +6,42 @@
   },
   {
     "name": "qwe",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "asd",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "zxc",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "cde",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "nhg",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "sed",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "vdr",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "fgb",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   }
 ]
