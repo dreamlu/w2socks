@@ -8,6 +8,7 @@ import (
 
 func Toolbar() fyne.CanvasObject {
 	return widget.NewToolbar(
+		toolbar.Conn(),
 		toolbar.Copy(),
 		toolbar.Share(),
 	)

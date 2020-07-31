@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
+	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui/connect"
 	"image/color"
 )
 
 type SelectClickText struct {
 	widget.Label
-	ServerIpAddr string
-	LocalPort    string
+	data.Config
 }
 
 func NewSelectClickText(content string, c color.Color) *SelectClickText {
@@ -22,12 +22,14 @@ func NewSelectClickText(content string, c color.Color) *SelectClickText {
 
 func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
 	fmt.Println("left click at", e)
+	connect.Name = c.Name
 	connect.SerIpAddr = c.ServerIpAddr
 	connect.LocalPort = c.LocalPort
 }
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
 	fmt.Println("right click at", e)
+	connect.Name = c.Name
 	connect.SerIpAddr = c.ServerIpAddr
 	connect.LocalPort = c.LocalPort
 	var menu = fyne.NewMenu("", connect.AddItem(), connect.EditItem(), connect.DelItem())

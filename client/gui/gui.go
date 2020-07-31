@@ -31,8 +31,7 @@ func Gui() fyne.Window {
 	for _, v := range conf {
 		infos.Children = append(infos.Children, canvas.NewLine(color.White))
 		text := NewSelectClickText(fmt.Sprintf("%s [%s,%s]", v.Name, v.ServerIpAddr, v.LocalPort), color.White)
-		text.ServerIpAddr = v.ServerIpAddr
-		text.LocalPort = v.LocalPort
+		text.Config = *v
 		infos.Children = append(infos.Children, text)
 
 	}
