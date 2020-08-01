@@ -29,13 +29,14 @@ func Gui() fyne.Window {
 
 	// 主菜单
 	addWindow.SetMainMenu(menu.MainMenu())
+
 	// 布局
+
 	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
-	//bom := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), list.Content)
 	vert := widget.NewVScrollContainer(widget.NewVBox(mainList()...))
 	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(1), top, vert))
-	vert.Resize(size)
-	addWindow.SetContent(vert)
+	//vert.Resize(size)
+	//addWindow.SetContent(vert)
 	return addWindow
 }
 
