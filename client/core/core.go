@@ -1,6 +1,8 @@
 package core
 
 import (
+	"context"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -10,12 +12,29 @@ import (
 )
 
 var (
-	Online int
-	Quit   = make(chan byte)
+	//Online int
+	Ws = map[string]W2socks{}
 )
+
+type W2socks struct {
+	context.Context
+	context.CancelFunc
+}
 
 // client
 func Core(ipAddr, localPort string) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	Ws[localPort] = W2socks{
+		Context:    ctx,
+		CancelFunc: cancel,
+	}
+	//context.WithDeadline()
+	listen(ctx, ipAddr, localPort)
+}
+
+// client listen
+func listen(ctx context.Context, ipAddr, localPort string) {
 	// 启动监听
 	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":"+localPort)
 	if err != nil {
@@ -30,7 +49,8 @@ func Core(ipAddr, localPort string) {
 
 	for {
 		select {
-		case <-Quit:
+		case <-ctx.Done():
+			fmt.Printf("旧线程结束\n")
 			return
 		default:
 			conn, _ := l.Accept()

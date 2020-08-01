@@ -29,7 +29,7 @@ func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
 	connect.CONFIG = c.Config
-	var menu = fyne.NewMenu("", connect.ConnItem(), connect.AddItem(), connect.EditItem(), connect.DelItem())
+	var menu = fyne.NewMenu("", connect.ConnItem(), connect.DisConnItem(), connect.AddItem(), connect.EditItem(), connect.DelItem())
 	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }
 

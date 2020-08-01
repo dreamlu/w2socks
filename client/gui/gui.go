@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/layout"
+	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
-	text2 "github.com/dreamlu/w2socks/client/gui/cuscom/text"
+	"github.com/dreamlu/w2socks/client/gui/cuscom/text"
+	"image/color"
 )
 
 var (
@@ -24,7 +25,8 @@ func Gui() fyne.Window {
 	// logo
 	majorApp.SetIcon(data.Logo())
 	addWindow := majorApp.NewWindow("w2socks")
-	addWindow.Resize(fyne.NewSize(280, 300))
+	size := fyne.NewSize(280, 300)
+	addWindow.Resize(size)
 
 	// 主菜单
 	addWindow.SetMainMenu(MainMenu())
@@ -32,7 +34,8 @@ func Gui() fyne.Window {
 	//top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), Toolbar())
 	//bom := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), list.Content)
 	vert := widget.NewVScrollContainer(widget.NewVBox(mainList()...))
-	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(1), vert))
+	vert.Resize(size)
+	addWindow.SetContent(vert)
 	return addWindow
 }
 
@@ -40,15 +43,14 @@ func Gui() fyne.Window {
 func mainList() []fyne.CanvasObject {
 	var items []fyne.CanvasObject
 
-	// 获取配置
 	conf := data.GetConfig()
 	for _, v := range conf {
-		item :=
-			NewLine(
-				text2.NewSelectClickText(fmt.Sprintf("%s", v.Name), *v),
-				text2.NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
-				//NewSelectClickText(fmt.Sprintf("%s", v.LocalPort), *v),
-			)
+		item := NewLine(
+			text.NewSelectClickText(fmt.Sprintf("%s\n%s", v.Name, v.ServerIpAddr), *v),
+			//NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
+			//NewSelectClickText(fmt.Sprintf("%s", v.LocalPort), *v),
+			canvas.NewLine(color.Black),
+		)
 		items = append(items, item)
 	}
 	return items

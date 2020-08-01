@@ -16,10 +16,10 @@ func Connect(serverIpAddr, localIpPort string) bool {
 	}
 
 	// 退出旧携程
-	Disconnect()
+	Disconnect(localIpPort)
 
 	go core.Core(serverIpAddr, localIpPort)
-	core.Online++
+	//core.Online++
 
 	// 系统通知
 	notify.SysNotify("w2socks", "success to connect "+serverIpAddr)
@@ -27,11 +27,13 @@ func Connect(serverIpAddr, localIpPort string) bool {
 }
 
 // 取消连接
-func Disconnect() bool {
+func Disconnect(localPort string) bool {
 	// 退出旧携程
-	if core.Online > 0 {
-		core.Quit <- 1
-		return true
+	for k, v := range core.Ws {
+		if k == localPort {
+			v.CancelFunc()
+			return true
+		}
 	}
 	return false
 }
