@@ -27,7 +27,9 @@ func GetConfig() []*Config {
 
 // 存储配置文件
 func SaveConfig(con Config) error {
-	return Write(Path, con)
+	conf := GetConfig()
+	conf = append(conf, &con)
+	return Write(Path, conf)
 }
 
 func Read(filename string, v interface{}) error {
