@@ -49,7 +49,7 @@ func Window(conf *data.Config, add bool) fyne.Window {
 		//if Disconnect() {
 		//	notify.SysNotify("notify", "server is disconnected")
 		//}
-		w.Close()
+		w.Hide()
 	}
 
 	// 连接操作
