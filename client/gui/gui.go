@@ -33,8 +33,10 @@ func Gui() fyne.Window {
 	// 布局
 
 	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
-	vert := widget.NewVScrollContainer(widget.NewVBox(mainList()...))
-	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(1), top, vert))
+	list := []fyne.CanvasObject{top}
+	list = append(list, mainList()...)
+	vert := widget.NewVScrollContainer(widget.NewVBox(list...))
+	addWindow.SetContent(vert)
 	//vert.Resize(size)
 	//addWindow.SetContent(vert)
 	return addWindow
