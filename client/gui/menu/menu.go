@@ -1,7 +1,8 @@
-package gui
+package menu
 
 import (
 	"fyne.io/fyne"
+	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/gui/menu/connect"
 	"github.com/dreamlu/w2socks/client/gui/menu/file"
 	"github.com/dreamlu/w2socks/client/gui/menu/help"
@@ -15,7 +16,7 @@ func MainMenu() *fyne.MainMenu {
 		fyne.NewMenu("Connect", connect.AddItem(), connect.EditItem(), connect.DelItem()),
 		fyne.NewMenu("Help", help.HelpItem()),
 		fyne.NewMenu("Back", fyne.NewMenuItem("back", func() {
-			G.Hide()
+			global.G.Hide()
 		})),
 	)
 	return mainMenu

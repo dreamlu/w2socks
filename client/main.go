@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui"
+	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/getlantern/systray"
 )
 
@@ -13,15 +14,15 @@ import (
 // 1.命令行
 // 2.GUI
 func main() {
-	gui.G = gui.Gui()
-	gui.G.Show()
+	global.G = gui.Gui()
+	global.G.Show()
 	go systray.Run(onReady, nil)
 	//w.SetOnClosed(func() {
 	//	w = window()
 	//	//w.ShowAndRun()
 	//	//systray.Run(onReady, nil)
 	//})
-	gui.G.ShowAndRun()
+	global.G.ShowAndRun()
 }
 
 // 驻后台
@@ -36,7 +37,7 @@ func onReady() {
 	for {
 		select {
 		case <-mUrl.ClickedCh:
-			gui.G.Show()
+			global.G.Show()
 			//o <- 0
 		case <-mQuit.ClickedCh:
 			systray.Quit()
