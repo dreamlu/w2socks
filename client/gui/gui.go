@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
+	text2 "github.com/dreamlu/w2socks/client/gui/cuscom/text"
 )
 
 var (
@@ -30,7 +32,7 @@ func Gui() fyne.Window {
 	//top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), Toolbar())
 	//bom := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), list.Content)
 	vert := widget.NewVScrollContainer(widget.NewVBox(mainList()...))
-	addWindow.SetContent(vert)
+	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(1), vert))
 	return addWindow
 }
 
@@ -42,8 +44,8 @@ func mainList() []fyne.CanvasObject {
 	for _, v := range conf {
 		item :=
 			NewLine(
-				NewSelectClickText(fmt.Sprintf("%s", v.Name), *v),
-				NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
+				text2.NewSelectClickText(fmt.Sprintf("%s", v.Name), *v),
+				text2.NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
 				//NewSelectClickText(fmt.Sprintf("%s", v.LocalPort), *v),
 			)
 		items = append(items, item)

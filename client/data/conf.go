@@ -3,11 +3,13 @@ package data
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"os"
 )
 
 type Config struct {
+	ID           string `json:"id"`
 	Name         string `json:"name"`
 	ServerIpAddr string `json:"server_ip_addr"`
 	LocalPort    string `json:"local_port"`
@@ -26,9 +28,44 @@ func GetConfig() []*Config {
 }
 
 // 存储配置文件
-func SaveConfig(con Config) error {
+func InsertConfig(con Config) error {
 	conf := GetConfig()
+	con.ID = uuid.New().String()
 	conf = append(conf, &con)
+	return Write(Path, conf)
+}
+
+// 存储配置文件
+func UpdateConfig(con Config) error {
+	conf := GetConfig()
+	var idx = -1
+	for k, v := range conf {
+		if con.ID == v.ID {
+			idx = k
+		}
+	}
+	if idx != -1 {
+		conf[idx] = &con
+	} else {
+		return nil
+	}
+	return Write(Path, conf)
+}
+
+// 存储配置文件
+func DeleteConfig(id string) error {
+	conf := GetConfig()
+	var idx = -1
+	for k, v := range conf {
+		if id == v.ID {
+			idx = k
+		}
+	}
+	if idx != -1 {
+		conf = append(conf[:idx], conf[idx+1:]...)
+	} else {
+		return nil
+	}
 	return Write(Path, conf)
 }
 

@@ -8,7 +8,7 @@ import (
 // 编辑逻辑
 func EditItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Edit", func() {
-		w := window.Window(SerIpAddr, LocalPort)
+		w := window.Window(&CONFIG, false)
 		w.Show()
 	})
 }
