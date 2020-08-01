@@ -8,17 +8,18 @@ import (
 )
 
 type SelectClickText struct {
-	widget.Label
+	*widget.Label
 	data.Config
 }
 
 func NewSelectClickText(content string, conf data.Config) *SelectClickText {
-	return &SelectClickText{
-		Label: widget.Label{
-			Text: content,
-		},
+	lb := widget.NewLabel(content)
+	lb.Resize(fyne.NewSize(40, 80))
+	t := &SelectClickText{
+		Label:  lb,
 		Config: conf,
 	}
+	return t
 }
 
 func (c *SelectClickText) Tapped(e *fyne.PointEvent) {

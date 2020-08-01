@@ -1,18 +1,18 @@
 [
   {
     "name": "default",
-    "server_ip_addr": "149.28.34.65:8018",
+    "server_ip_addr": "server_ip:8018",
     "local_port": "8019"
   },
   {
     "name": "qwe",
-    "server_ip_addr": "server_ip:8018",
+    "server_ip_addr": "server_ip:30003",
     "local_port": "8019"
   },
   {
     "name": "asd",
     "server_ip_addr": "server_ip:8018",
-    "local_port": "8019"
+    "local_port": "30003"
   },
   {
     "name": "zxc",

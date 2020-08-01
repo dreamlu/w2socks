@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
@@ -31,7 +30,7 @@ func Gui() fyne.Window {
 	//top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), Toolbar())
 	//bom := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), list.Content)
 	vert := widget.NewVScrollContainer(widget.NewVBox(mainList()...))
-	addWindow.SetContent(fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(1), vert))
+	addWindow.SetContent(vert)
 	return addWindow
 }
 
@@ -41,8 +40,28 @@ func mainList() []fyne.CanvasObject {
 
 	conf := data.GetConfig()
 	for _, v := range conf {
-		text := NewSelectClickText(fmt.Sprintf("[%s] %s", v.Name, v.ServerIpAddr), *v)
-		items = append(items, text)
+		item :=
+			NewLine(
+				NewSelectClickText(fmt.Sprintf("%s", v.Name), *v),
+				NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
+				//NewSelectClickText(fmt.Sprintf("%s", v.LocalPort), *v),
+			)
+		items = append(items, item)
 	}
 	return items
+}
+
+// new line
+//func NewLine(w ...fyne.Widget) fyne.Widget {
+//	w := widget.NewHBox()
+//	return w
+//}
+
+// new line box
+func NewLine(obj ...fyne.CanvasObject) fyne.CanvasObject {
+
+	c := widget.NewVBox(obj...)
+	//c := fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(3), obj...)
+
+	return c
 }
