@@ -3,6 +3,7 @@ package window
 import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
+	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/util/notify"
 	"log"
 )
@@ -13,6 +14,15 @@ func Window(ipAddr, port string) fyne.Window {
 	w := fyne.CurrentApp().NewWindow("connect content")
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
+
+	// m名字
+	nameEntry := widget.NewEntry()
+	if ipAddr == "" {
+		nameEntry.SetPlaceHolder("name")
+	} else {
+		nameEntry.Text = ipAddr
+	}
+	nameEntry.Resize(comSize)
 
 	// 服务端ip和端口
 	serverEntry := widget.NewEntry()
@@ -33,28 +43,42 @@ func Window(ipAddr, port string) fyne.Window {
 	localPortEntry.Resize(comSize)
 
 	form := widget.NewForm(
+		widget.NewFormItem("name:", nameEntry),
 		widget.NewFormItem("server:", serverEntry),
 		widget.NewFormItem("local:", localPortEntry),
 	)
 
-	form.CancelText = "disconnect"
-	form.SubmitText = "connect"
+	form.CancelText = "cancel"
+	form.SubmitText = "save"
 
 	// 取消操作
 	form.OnCancel = func() {
-		if Disconnect() {
-			notify.SysNotify("notify", "server is disconnected")
-		}
+		//if Disconnect() {
+		//	notify.SysNotify("notify", "server is disconnected")
+		//}
 		w.Close()
 	}
 
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
-		b := Connect(serverEntry.Text, localPortEntry.Text)
+		b := CheckEntry(serverEntry.Text, localPortEntry.Text)
 		if !b {
 			return
 		}
+		// TODO 编辑也是添加问题
+		// TODO 删除问题
+		conf := data.Config{}
+		conf.Name = nameEntry.Text
+		conf.ServerIpAddr = serverEntry.Text
+		conf.LocalPort = localPortEntry.Text
+		err := data.SaveConfig(conf)
+		if err != nil {
+			notify.SysNotify("warn!!", err.Error())
+			return
+		}
+		notify.SysNotify("info", "连接信息已存入")
+		w.Close()
 	}
 	//form.OnSubmit = func() {
 	//	log.Println("提交")

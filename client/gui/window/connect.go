@@ -11,16 +11,7 @@ import (
 func Connect(serverIpAddr, localIpPort string) bool {
 	log.Println("Server ip address: " + serverIpAddr)
 
-	// ip地址是否正确
-	msg, ok := ip.Check(serverIpAddr)
-	if !ok {
-		notify.SysNotify("warn!!", msg)
-		return false
-	}
-
-	//本地端口是否正确
-	if !ip.CheckPort(localIpPort) {
-		notify.SysNotify("warn!!", "Incorrect local port")
+	if !CheckEntry(serverIpAddr, localIpPort) {
 		return false
 	}
 
@@ -43,4 +34,20 @@ func Disconnect() bool {
 		return true
 	}
 	return false
+}
+
+func CheckEntry(serverIpAddr, localIpPort string) bool {
+	// ip地址是否正确
+	msg, ok := ip.Check(serverIpAddr)
+	if !ok {
+		notify.SysNotify("warn!!", msg)
+		return false
+	}
+
+	//本地端口是否正确
+	if !ip.CheckPort(localIpPort) {
+		notify.SysNotify("warn!!", "Incorrect local port")
+		return false
+	}
+	return true
 }
