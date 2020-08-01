@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
+	text2 "github.com/dreamlu/w2socks/client/gui/cuscom/text"
 )
 
 var (
@@ -39,9 +40,10 @@ func Gui() fyne.Window {
 func mainList() []fyne.CanvasObject {
 	var items []fyne.CanvasObject
 
+	// 获取配置
 	conf := data.GetConfig()
 	for _, v := range conf {
-		text := NewSelectClickText(fmt.Sprintf("[%s] %s", v.Name, v.ServerIpAddr), *v)
+		text := text2.NewSelectClickText(fmt.Sprintf("[%s] %s", v.Name, v.ServerIpAddr), *v)
 		items = append(items, text)
 	}
 	return items

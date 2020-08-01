@@ -6,6 +6,7 @@ import (
 	"github.com/dreamlu/w2socks/client/gui/toolbar"
 )
 
+// 工具栏
 func Toolbar() fyne.CanvasObject {
 	return widget.NewToolbar(
 		toolbar.Conn(),

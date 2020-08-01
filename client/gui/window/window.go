@@ -10,36 +10,29 @@ import (
 
 // 通用window
 // 编辑/添加连接窗体
-func Window(ipAddr, port string) fyne.Window {
+func Window(conf *data.Config, add bool) fyne.Window {
 	w := fyne.CurrentApp().NewWindow("connect content")
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
 
 	// m名字
 	nameEntry := widget.NewEntry()
-	if ipAddr == "" {
-		nameEntry.SetPlaceHolder("name")
-	} else {
-		nameEntry.Text = ipAddr
-	}
-	nameEntry.Resize(comSize)
-
 	// 服务端ip和端口
 	serverEntry := widget.NewEntry()
-	if ipAddr == "" {
-		serverEntry.SetPlaceHolder("ip:port")
-	} else {
-		serverEntry.Text = ipAddr
-	}
-	serverEntry.Resize(comSize)
-
 	// 本地端口号
 	localPortEntry := widget.NewEntry()
-	if port == "" {
+	if add {
+		// 添加
+		nameEntry.SetPlaceHolder("name")
+		serverEntry.SetPlaceHolder("ip:port")
 		localPortEntry.SetPlaceHolder("port")
 	} else {
-		localPortEntry.Text = port
+		nameEntry.Text = conf.Name
+		serverEntry.Text = conf.ServerIpAddr
+		localPortEntry.Text = conf.LocalPort
 	}
+	nameEntry.Resize(comSize)
+	serverEntry.Resize(comSize)
 	localPortEntry.Resize(comSize)
 
 	form := widget.NewForm(
@@ -66,13 +59,18 @@ func Window(ipAddr, port string) fyne.Window {
 		if !b {
 			return
 		}
-		// TODO 编辑也是添加问题
-		// TODO 删除问题
 		conf := data.Config{}
 		conf.Name = nameEntry.Text
 		conf.ServerIpAddr = serverEntry.Text
 		conf.LocalPort = localPortEntry.Text
-		err := data.SaveConfig(conf)
+		var err error
+		if add {
+			// 添加
+			err = data.InsertConfig(conf)
+		} else {
+			// 编辑
+			err = data.UpdateConfig(conf)
+		}
 		if err != nil {
 			notify.SysNotify("warn!!", err.Error())
 			return
@@ -80,10 +78,6 @@ func Window(ipAddr, port string) fyne.Window {
 		notify.SysNotify("info", "连接信息已存入")
 		w.Close()
 	}
-	//form.OnSubmit = func() {
-	//	log.Println("提交")
-	//	ctrl.ConnectAndCall(serverEntry.Text, localPortEntry.Text, w.Hide)
-	//}
 
 	// 窗体
 	content := widget.NewVBox(

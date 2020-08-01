@@ -1,12 +1,13 @@
-package gui
+package text
 
 import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
-	"github.com/dreamlu/w2socks/client/gui/connect"
+	"github.com/dreamlu/w2socks/client/gui/menu/connect"
 )
 
+// 可以点击和右选中的文本
 type SelectClickText struct {
 	widget.Label
 	data.Config
@@ -22,15 +23,11 @@ func NewSelectClickText(content string, conf data.Config) *SelectClickText {
 }
 
 func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
-	connect.Name = c.Name
-	connect.SerIpAddr = c.ServerIpAddr
-	connect.LocalPort = c.LocalPort
+	connect.CONFIG = c.Config
 }
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
-	connect.Name = c.Name
-	connect.SerIpAddr = c.ServerIpAddr
-	connect.LocalPort = c.LocalPort
+	connect.CONFIG = c.Config
 	var menu = fyne.NewMenu("", connect.ConnItem(), connect.AddItem(), connect.EditItem(), connect.DelItem())
 	widget.ShowPopUpMenuAtPosition(menu, fyne.CurrentApp().Driver().CanvasForObject(c), e.AbsolutePosition)
 }

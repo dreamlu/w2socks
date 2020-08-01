@@ -2,12 +2,12 @@ package gui
 
 import (
 	"fyne.io/fyne"
-	"github.com/dreamlu/w2socks/client/gui/connect"
-	"github.com/dreamlu/w2socks/client/gui/file"
-	"github.com/dreamlu/w2socks/client/gui/help"
+	"github.com/dreamlu/w2socks/client/gui/menu/connect"
+	"github.com/dreamlu/w2socks/client/gui/menu/file"
+	"github.com/dreamlu/w2socks/client/gui/menu/help"
 )
 
-// 主窗口
+// 主窗口菜单
 func MainMenu() *fyne.MainMenu {
 	mainMenu := fyne.NewMainMenu(
 		// a quit item will be appended to our first mainMenu
@@ -18,6 +18,5 @@ func MainMenu() *fyne.MainMenu {
 			G.Hide()
 		})),
 	)
-
 	return mainMenu
 }
