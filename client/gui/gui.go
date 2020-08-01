@@ -40,6 +40,7 @@ func Gui() fyne.Window {
 func mainList() []fyne.CanvasObject {
 	var items []fyne.CanvasObject
 
+	// 获取配置
 	conf := data.GetConfig()
 	for _, v := range conf {
 		item :=
