@@ -10,7 +10,7 @@ import (
 
 // 通用window
 // 编辑/添加连接窗体
-func Window(conf *data.Config, add bool) fyne.Window {
+func OpenWindow(conf *data.Config, add bool) fyne.Window {
 	w := fyne.CurrentApp().NewWindow("connect content")
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
@@ -49,24 +49,24 @@ func Window(conf *data.Config, add bool) fyne.Window {
 
 	// 取消操作
 	form.OnCancel = func() {
-		//if Disconnect() {
-		//	notify.SysNotify("notify", "server is disconnected")
-		//}
 		w.Hide()
 	}
 
 	// 连接操作
 	form.OnSubmit = func() {
 		log.Println("提交")
+		// 检查验证输入的ip地址是否有效
 		b := CheckEntry(serverEntry.Text, localPortEntry.Text)
 		if !b {
 			return
 		}
-		conf := data.Config{}
-		conf.ID = id
-		conf.Name = nameEntry.Text
-		conf.ServerIpAddr = serverEntry.Text
-		conf.LocalPort = localPortEntry.Text
+		conf := data.Config{
+			ID:           id,
+			Name:         nameEntry.Text,
+			ServerIpAddr: serverEntry.Text,
+			LocalPort:    localPortEntry.Text,
+		}
+
 		var err error
 		if add {
 			// 添加

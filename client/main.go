@@ -17,11 +17,6 @@ func main() {
 	global.G = gui.Gui()
 	global.G.Show()
 	go systray.Run(onReady, nil)
-	//w.SetOnClosed(func() {
-	//	w = window()
-	//	//w.ShowAndRun()
-	//	//systray.Run(onReady, nil)
-	//})
 	global.G.ShowAndRun()
 }
 

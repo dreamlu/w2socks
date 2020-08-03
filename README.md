@@ -19,6 +19,8 @@ websocket + sockets代理工具
 
 [客户端](https://github.com/dreamlu/w2socks/releases)  
 
+![架构图](./snapshot/1.png)
+
 TODO  
 1.跨平台客户端  
 
