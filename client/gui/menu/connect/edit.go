@@ -16,6 +16,5 @@ func EditItem() *fyne.MenuItem {
 		}
 		w := window.Window(&global.CONFIG, false)
 		w.Show()
-		//canvas.Refresh(gui.Gui().Content())
 	})
 }

@@ -15,6 +15,8 @@ import (
 	"image/color"
 )
 
+var majorWindow fyne.Window
+
 // 主窗体
 func Gui() fyne.Window {
 	// 主程序
@@ -23,36 +25,27 @@ func Gui() fyne.Window {
 	majorApp.Settings().SetTheme(theme.LightTheme())
 	// logo
 	majorApp.SetIcon(data.Logo())
-	addWindow := majorApp.NewWindow("w2socks")
+	majorWindow = majorApp.NewWindow("w2socks")
 	size := fyne.NewSize(280, 300)
-	addWindow.Resize(size)
+	majorWindow.Resize(size)
 
 	// 主菜单
-	addWindow.SetMainMenu(menu.MainMenu())
+	majorWindow.SetMainMenu(menu.MainMenu())
 
 	// 布局
-
-	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
-	list := []fyne.CanvasObject{top}
-	list = append(list, mainList()...)
-	vert := widget.NewVScrollContainer(widget.NewVBox(list...))
-	addWindow.SetContent(vert)
-	//vert.Resize(size)
-	//addWindow.SetContent(vert)
-	return addWindow
+	majorWindow.SetContent(Content())
+	return majorWindow
 }
 
 // 列表核心
 func mainList() []fyne.CanvasObject {
 	var items []fyne.CanvasObject
 
-	// 获取配置
+	// 获取本地配置并加载到容器
 	conf := data.GetConfig()
 	for _, v := range conf {
-		item := NewLine(
+		item := widget.NewVBox(
 			text.NewSelectClickText(fmt.Sprintf("%s\n%s", v.Name, v.ServerIpAddr), *v),
-			//NewSelectClickText(fmt.Sprintf("%s", v.ServerIpAddr), *v),
-			//NewSelectClickText(fmt.Sprintf("%s", v.LocalPort), *v),
 			canvas.NewLine(color.Black),
 		)
 		items = append(items, item)
@@ -60,17 +53,11 @@ func mainList() []fyne.CanvasObject {
 	return items
 }
 
-// new line
-//func NewLine(w ...fyne.Widget) fyne.Widget {
-//	w := widget.NewHBox()
-//	return w
-//}
-
-// new line box
-func NewLine(obj ...fyne.CanvasObject) fyne.CanvasObject {
-
-	c := widget.NewVBox(obj...)
-	//c := fyne.NewContainerWithLayout(layout.NewAdaptiveGridLayout(3), obj...)
-
-	return c
+// 刷新主界面内容
+func Content() fyne.CanvasObject {
+	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
+	list := []fyne.CanvasObject{top}
+	list = append(list, mainList()...)
+	vert := widget.NewVScrollContainer(widget.NewVBox(list...))
+	return vert
 }

@@ -15,6 +15,8 @@ func Window(conf *data.Config, add bool) fyne.Window {
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
 
+	var id string
+
 	// m名字
 	nameEntry := widget.NewEntry()
 	// 服务端ip和端口
@@ -27,6 +29,7 @@ func Window(conf *data.Config, add bool) fyne.Window {
 		serverEntry.SetPlaceHolder("ip:port")
 		localPortEntry.SetPlaceHolder("port")
 	} else {
+		id = conf.ID
 		nameEntry.Text = conf.Name
 		serverEntry.Text = conf.ServerIpAddr
 		localPortEntry.Text = conf.LocalPort
@@ -60,6 +63,7 @@ func Window(conf *data.Config, add bool) fyne.Window {
 			return
 		}
 		conf := data.Config{}
+		conf.ID = id
 		conf.Name = nameEntry.Text
 		conf.ServerIpAddr = serverEntry.Text
 		conf.LocalPort = localPortEntry.Text

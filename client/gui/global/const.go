@@ -13,4 +13,8 @@ var (
 	// 全局
 	// 选中/右键文本赋值
 	CONFIG data.Config
+
+	// 全局
+	// 主界面内容布局
+	CONTENT fyne.CanvasObject
 )
