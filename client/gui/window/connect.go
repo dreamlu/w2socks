@@ -1,6 +1,7 @@
 package window
 
 import (
+	"fmt"
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/util/ip"
 	"github.com/dreamlu/w2socks/client/util/notify"
@@ -16,7 +17,9 @@ func Connect(serverIpAddr, localIpPort string) bool {
 	}
 
 	// 退出旧携程
-	Disconnect(localIpPort)
+	if !Disconnect(localIpPort) {
+		fmt.Print("err dis conn")
+	}
 
 	go core.Core(serverIpAddr, localIpPort)
 	//core.Online++
@@ -31,6 +34,7 @@ func Disconnect(localPort string) bool {
 	// 退出旧携程
 	for k, v := range core.Ws {
 		if k == localPort {
+			v.Err()
 			v.CancelFunc()
 			return true
 		}

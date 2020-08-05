@@ -27,16 +27,24 @@ func onReady() {
 	systray.SetTooltip("w2socks")
 	// 托盘菜单
 	mUrl := systray.AddMenuItem("恢复", "my home")
+	mMin := systray.AddMenuItem("最小化", "mini")
 	mQuit := systray.AddMenuItem("退出", "Quit the whole app")
+	mUrl.Hide()
 	//systray.AddSeparator() // 分隔线
 	for {
 		select {
 		case <-mUrl.ClickedCh:
+			mMin.Show()
+			mUrl.Hide()
 			global.G.Show()
 			//o <- 0
 		case <-mQuit.ClickedCh:
 			systray.Quit()
 			return
+		case <-mMin.ClickedCh:
+			mUrl.Show()
+			mMin.Hide()
+			global.G.Hide()
 		}
 	}
 }

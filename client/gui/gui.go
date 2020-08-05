@@ -26,7 +26,7 @@ func Gui() fyne.Window {
 	// logo
 	majorApp.SetIcon(data.Logo())
 	majorWindow = majorApp.NewWindow("w2socks")
-	size := fyne.NewSize(280, 300)
+	size := fyne.NewSize(330, 390)
 	majorWindow.Resize(size)
 
 	// 主菜单
