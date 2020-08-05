@@ -10,12 +10,11 @@ import (
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui/cuscom/text"
+	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/gui/menu"
 	"github.com/dreamlu/w2socks/client/gui/toolbar"
 	"image/color"
 )
-
-var majorWindow fyne.Window
 
 // 主窗体
 func Gui() fyne.Window {
@@ -25,7 +24,7 @@ func Gui() fyne.Window {
 	majorApp.Settings().SetTheme(theme.LightTheme())
 	// logo
 	majorApp.SetIcon(data.Logo())
-	majorWindow = majorApp.NewWindow("w2socks")
+	majorWindow := majorApp.NewWindow("w2socks")
 	size := fyne.NewSize(330, 390)
 	majorWindow.Resize(size)
 
@@ -34,6 +33,7 @@ func Gui() fyne.Window {
 
 	// 布局
 	majorWindow.SetContent(Content())
+	go refresh()
 	return majorWindow
 }
 
@@ -53,11 +53,20 @@ func mainList() []fyne.CanvasObject {
 	return items
 }
 
-// 刷新主界面内容
+// 主界面
 func Content() fyne.CanvasObject {
 	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
 	list := []fyne.CanvasObject{top}
 	list = append(list, mainList()...)
 	vert := widget.NewVScrollContainer(widget.NewVBox(list...))
 	return vert
+}
+
+// refresh Content
+func refresh() {
+	for {
+		if <-global.G.Refresh == 1 {
+			global.G.SetContent(Content())
+		}
+	}
 }

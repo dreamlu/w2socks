@@ -14,7 +14,10 @@ import (
 // 1.命令行
 // 2.GUI
 func main() {
-	global.G = gui.Gui()
+	global.G = global.Window{
+		Window:  gui.Gui(),
+		Refresh: make(chan byte),
+	}
 	global.G.Show()
 	go systray.Run(onReady, nil)
 	global.G.ShowAndRun()

@@ -8,13 +8,14 @@ import (
 var (
 	// 全局
 	// 主界面
-	G fyne.Window
+	G Window
 
 	// 全局
 	// 选中/右键文本赋值
 	CONFIG data.Config
-
-	// 全局
-	// 主界面内容布局
-	CONTENT fyne.CanvasObject
 )
+
+type Window struct {
+	fyne.Window
+	Refresh chan byte
+}

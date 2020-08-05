@@ -35,6 +35,7 @@ func Disconnect(localPort string) bool {
 	for k, v := range core.Ws {
 		if k == localPort {
 			v.CancelFunc()
+			delete(core.Ws, localPort)
 			return true
 		}
 	}

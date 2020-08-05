@@ -14,7 +14,8 @@ func EditItem() *fyne.MenuItem {
 			notify.SysNotify("warn!!", "Edit content not selected")
 			return
 		}
-		w := window.OpenWindow(&global.CONFIG, false)
-		w.Show()
+		window.OpenWindow(&global.CONFIG, false)
+		//fmt.Println("编辑完成")
+		//global.G.Refresh <- 1
 	})
 }

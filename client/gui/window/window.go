@@ -1,9 +1,11 @@
 package window
 
 import (
+	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
 	"github.com/dreamlu/w2socks/client/data"
+	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/util/notify"
 	"log"
 )
@@ -80,6 +82,7 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 			return
 		}
 		notify.SysNotify("info", "连接信息已存入")
+		global.G.Refresh <- 1
 		w.Close()
 	}
 
@@ -92,5 +95,10 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 		),
 	)
 	w.SetContent(content)
+	w.SetOnClosed(func() {
+		fmt.Println("操作完成,刷新")
+		global.G.Refresh <- 1
+	})
+	w.Show()
 	return w
 }
