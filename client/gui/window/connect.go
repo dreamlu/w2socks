@@ -34,7 +34,6 @@ func Disconnect(localPort string) bool {
 	// 退出旧携程
 	for k, v := range core.Ws {
 		if k == localPort {
-			v.Err()
 			v.CancelFunc()
 			return true
 		}

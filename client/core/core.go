@@ -8,7 +8,11 @@ import (
 	"log"
 	"net"
 	"net/url"
+	"os/exec"
+	"runtime"
+	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -28,19 +32,6 @@ type W2socket struct {
 	port string
 }
 
-// close
-func CloseContext(ctx context.Context) {
-
-	localPort := ctx.Value("localPort").(string)
-	for _, v := range Wt {
-		for _, v2 := range v {
-			if v2.port == localPort {
-				v2.UnderlyingConn().Close()
-			}
-		}
-	}
-}
-
 // client
 func Core(ipAddr, localPort string) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -51,6 +42,7 @@ func Core(ipAddr, localPort string) {
 		CancelFunc: cancel,
 	}
 	//context.WithDeadline()
+	go telnetLocal(localPort)
 	listen(ctx, ipAddr, localPort)
 }
 
@@ -75,7 +67,7 @@ func listen(ctx context.Context, ipAddr, localPort string) {
 		conn, _ := l.Accept()
 		select {
 		case <-ctx.Done():
-			CloseContext(ctx)
+			CloseContext(ctx, l)
 			//ws.Close()
 			fmt.Printf("旧线程结束\n")
 			return
@@ -116,4 +108,45 @@ func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 	go ioCopy(ws.UnderlyingConn(), socks)
 	go ioCopy(socks, ws.UnderlyingConn())
 	wg.Wait()
+}
+
+// close
+func CloseContext(ctx context.Context, l *net.TCPListener) {
+
+	localPort := ctx.Value("localPort").(string)
+	for _, v := range Wt {
+		for _, v2 := range v {
+			if v2.port == localPort {
+				v2.UnderlyingConn().Close()
+			}
+		}
+	}
+	l.Close()
+}
+
+// telnet local
+func telnetLocal(localPort string) {
+	var (
+		cmd   *exec.Cmd
+		bytes []byte
+	)
+	for range time.Tick(time.Millisecond * 500) {
+		switch runtime.GOOS {
+		case "darwin":
+			cmd = exec.Command("nc", "-vz", "-w", "2", "127.0.0.1", localPort)
+			//读取所有输出
+			bytes, _ = cmd.Output()
+			if !strings.Contains(string(bytes), "succeeded") {
+				return
+			}
+		default:
+			cmd = exec.Command("telnet", "127.0.0.1", localPort)
+			//读取所有输出
+			bytes, _ = cmd.Output()
+			if !strings.Contains(string(bytes), "Connected") {
+				return
+			}
+		}
+		log.Println(string(bytes))
+	}
 }
