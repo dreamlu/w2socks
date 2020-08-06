@@ -15,7 +15,6 @@ func EditItem() *fyne.MenuItem {
 			return
 		}
 		window.OpenWindow(&global.CONFIG.Config, false)
-		//fmt.Println("编辑完成")
-		//global.G.Refresh <- 1
+		//global.G.Modal <- 1
 	})
 }

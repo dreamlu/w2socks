@@ -11,11 +11,16 @@ import (
 	"log"
 )
 
+var W fyne.Window
+
 // 通用window
 // 编辑/添加连接窗体
 func OpenWindow(conf *data.Config, add bool) fyne.Window {
-	w := fyne.CurrentApp().NewWindow("connect content")
-	w.Resize(fyne.NewSize(280, 300))
+	if W != nil {
+		W.Close()
+	}
+	W = fyne.CurrentApp().NewWindow("connect content")
+	W.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
 
 	// m名字
@@ -49,7 +54,7 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 
 	// 取消操作
 	form.OnCancel = func() {
-		w.Hide()
+		W.Hide()
 	}
 
 	// 连接操作
@@ -82,7 +87,7 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 		}
 		notify.SysNotify("info", "连接信息已存入")
 		global.G.Refresh <- 1
-		w.Close()
+		W.Close()
 	}
 
 	// 窗体
@@ -93,11 +98,30 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 			form,
 		),
 	)
-	w.SetContent(content)
-	w.SetOnClosed(func() {
+	W.SetContent(content)
+	W.SetOnClosed(func() {
 		fmt.Println("操作完成,刷新")
 		global.G.Refresh <- 1
 	})
-	w.Show()
-	return w
+	W.Show()
+	return W
 }
+
+//func Modal() {
+//	for {
+//		if <-global.G.Modal == 1 {
+//			username := widget.NewEntry()
+//			password := widget.NewPasswordEntry()
+//			content := widget.NewForm(widget.NewFormItem("Username", username),
+//				widget.NewFormItem("Password", password))
+//
+//			dialog.ShowCustomConfirm("Please Enter:", "Log In", "Cancel", content, func(b bool) {
+//				if !b {
+//					return
+//				}
+//
+//				log.Println("Please Authenticate", username.Text, password.Text)
+//			}, global.G.Window)
+//		}
+//	}
+//}
