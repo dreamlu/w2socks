@@ -14,7 +14,7 @@ type Config struct {
 	core.W2Config
 }
 
-var Path = "./config.json"
+var Path = "./.w2socks.json"
 
 func GetConfig() []*Config {
 	var conf []*Config

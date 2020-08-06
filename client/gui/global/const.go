@@ -3,6 +3,7 @@ package global
 import (
 	"fyne.io/fyne"
 	"github.com/dreamlu/w2socks/client/data"
+	"github.com/getlantern/systray"
 )
 
 var (
@@ -13,6 +14,9 @@ var (
 	// 全局
 	// 选中/右键文本赋值
 	CONFIG CONGIG
+
+	// 系统托盘
+	Mmin *systray.MenuItem
 )
 
 type Window struct {

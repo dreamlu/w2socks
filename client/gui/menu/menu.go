@@ -16,7 +16,7 @@ func MainMenu() *fyne.MainMenu {
 		fyne.NewMenu("Connect", connect.AddItem(), connect.EditItem(), connect.DelItem()),
 		fyne.NewMenu("Help", help.HelpItem()),
 		fyne.NewMenu("Back", fyne.NewMenuItem("back", func() {
-			global.G.Hide()
+			global.Mmin.ClickedCh <- struct{}{}
 		})),
 	)
 	return mainMenu
