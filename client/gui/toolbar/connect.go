@@ -11,7 +11,7 @@ import (
 func Conn() widget.ToolbarItem {
 	return widget.NewToolbarAction(theme.ConfirmIcon(), func() {
 		if &global.CONFIG != nil {
-			window.Connect(global.CONFIG.ServerIpAddr, global.CONFIG.LocalPort)
+			window.Connect(global.CONFIG.W2Config)
 		} else {
 			notify.SysNotify("warn!!", "No content selected")
 		}

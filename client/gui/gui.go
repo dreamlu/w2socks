@@ -43,9 +43,9 @@ func mainList() []fyne.CanvasObject {
 
 	// 获取本地配置并加载到容器
 	conf := data.GetConfig()
-	for _, v := range conf {
+	for k, v := range conf {
 		item := widget.NewVBox(
-			text.NewSelectClickText(fmt.Sprintf("%s\n%s", v.Name, v.ServerIpAddr), *v),
+			text.NewSelectClickText(fmt.Sprintf("%s\n%s", v.Name, v.ServerIpAddr), *v, k),
 			canvas.NewLine(color.Black),
 		)
 		items = append(items, item)

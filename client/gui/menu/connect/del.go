@@ -10,7 +10,7 @@ import (
 // 删除逻辑
 func DelItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Delete", func() {
-		err := data.DeleteConfig(global.CONFIG.ID)
+		err := data.DeleteConfig(global.CONFIG.Config)
 		if err != nil {
 			notify.SysNotify("error!!", err.Error())
 		}

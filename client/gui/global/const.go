@@ -12,10 +12,15 @@ var (
 
 	// 全局
 	// 选中/右键文本赋值
-	CONFIG data.Config
+	CONFIG CONGIG
 )
 
 type Window struct {
 	fyne.Window
 	Refresh chan byte
+}
+
+type CONGIG struct {
+	data.Config
+	Index int
 }

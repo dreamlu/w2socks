@@ -13,30 +13,45 @@ import (
 type SelectClickText struct {
 	*widget.Label
 	data.Config
+	index int
 	//BaseRenderer
 	//layout fyne.Layout
 }
 
-func NewSelectClickText(content string, conf data.Config) *SelectClickText {
+func NewSelectClickText(content string, conf data.Config, index int) *SelectClickText {
 	lb := widget.NewLabel(content)
 	//lb.Resize(fyne.NewSize(40, 80))
 	t := &SelectClickText{
 		Label:  lb,
 		Config: conf,
+		index:  index,
 	}
-	lb.TextStyle = fyne.TextStyle{
-		Bold:   true,
-		Italic: true,
+
+	// 判断是否连接
+	for _, v := range core.Ws {
+		if v.Value("localPort").(string) == t.LocalPort {
+			lb.TextStyle = fyne.TextStyle{
+				Bold:   true,
+				Italic: true,
+			}
+			break
+		}
 	}
 	return t
 }
 
 func (c *SelectClickText) Tapped(e *fyne.PointEvent) {
-	global.CONFIG = c.Config
+	global.CONFIG = global.CONGIG{
+		Config: c.Config,
+		Index:  c.index,
+	}
 }
 
 func (c *SelectClickText) TappedSecondary(e *fyne.PointEvent) {
-	global.CONFIG = c.Config
+	global.CONFIG = global.CONGIG{
+		Config: c.Config,
+		Index:  c.index,
+	}
 	var menu *fyne.Menu
 	menu = fyne.NewMenu("", connect.ConnItem(), connect.AddItem(), connect.EditItem(), connect.DelItem())
 	// 判断是否连接

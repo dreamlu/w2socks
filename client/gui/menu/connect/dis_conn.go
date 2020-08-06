@@ -9,6 +9,6 @@ import (
 // 取消连接逻辑
 func DisConnItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("DisConn", func() {
-		window.Disconnect(global.CONFIG.LocalPort)
+		window.Disconnect(global.CONFIG.W2Config.String())
 	})
 }

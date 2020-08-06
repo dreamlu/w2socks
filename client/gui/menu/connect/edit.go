@@ -10,11 +10,11 @@ import (
 // 编辑逻辑
 func EditItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Edit", func() {
-		if &global.CONFIG == nil || global.CONFIG.ID == "" {
+		if &global.CONFIG == nil {
 			notify.SysNotify("warn!!", "Edit content not selected")
 			return
 		}
-		window.OpenWindow(&global.CONFIG, false)
+		window.OpenWindow(&global.CONFIG.Config, false)
 		//fmt.Println("编辑完成")
 		//global.G.Refresh <- 1
 	})

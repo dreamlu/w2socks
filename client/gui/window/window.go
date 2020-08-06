@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
+	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/util/notify"
@@ -17,8 +18,6 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 	w.Resize(fyne.NewSize(280, 300))
 	comSize := fyne.NewSize(100, 20)
 
-	var id string
-
 	// m名字
 	nameEntry := widget.NewEntry()
 	// 服务端ip和端口
@@ -31,7 +30,6 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 		serverEntry.SetPlaceHolder("ip:port")
 		localPortEntry.SetPlaceHolder("port")
 	} else {
-		id = conf.ID
 		nameEntry.Text = conf.Name
 		serverEntry.Text = conf.ServerIpAddr
 		localPortEntry.Text = conf.LocalPort
@@ -63,10 +61,11 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 			return
 		}
 		conf := data.Config{
-			ID:           id,
-			Name:         nameEntry.Text,
-			ServerIpAddr: serverEntry.Text,
-			LocalPort:    localPortEntry.Text,
+			Name: nameEntry.Text,
+			W2Config: core.W2Config{
+				ServerIpAddr: serverEntry.Text,
+				LocalPort:    localPortEntry.Text,
+			},
 		}
 
 		var err error
@@ -75,7 +74,7 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 			err = data.InsertConfig(conf)
 		} else {
 			// 编辑
-			err = data.UpdateConfig(conf)
+			err = data.UpdateConfig(conf, global.CONFIG.Index)
 		}
 		if err != nil {
 			notify.SysNotify("warn!!", err.Error())

@@ -9,6 +9,6 @@ import (
 // 连接逻辑
 func ConnItem() *fyne.MenuItem {
 	return fyne.NewMenuItem("Connect", func() {
-		window.Connect(global.CONFIG.ServerIpAddr, global.CONFIG.LocalPort)
+		window.Connect(global.CONFIG.W2Config)
 	})
 }

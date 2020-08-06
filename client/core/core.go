@@ -21,6 +21,15 @@ var (
 	Wt = map[string][]*W2socket{}
 )
 
+type W2Config struct {
+	ServerIpAddr string `json:"server_ip_addr"`
+	LocalPort    string `json:"local_port"`
+}
+
+func (w *W2Config) String() string {
+	return w.ServerIpAddr + ";" + w.LocalPort
+}
+
 type W2socks struct {
 	context.Context
 	context.CancelFunc
@@ -33,17 +42,17 @@ type W2socket struct {
 }
 
 // client
-func Core(ipAddr, localPort string) {
+func Core(wc *W2Config) {
 	ctx, cancel := context.WithCancel(context.Background())
-	ctx = context.WithValue(ctx, "localPort", localPort)
+	ctx = context.WithValue(ctx, "localPort", wc.LocalPort)
 
-	Ws[localPort] = W2socks{
+	Ws[wc.String()] = W2socks{
 		Context:    ctx,
 		CancelFunc: cancel,
 	}
 	//context.WithDeadline()
-	go telnetLocal(localPort)
-	listen(ctx, ipAddr, localPort)
+	go telnetLocal(wc.LocalPort)
+	listen(ctx, wc.ServerIpAddr, wc.LocalPort)
 }
 
 // client listen

@@ -2,17 +2,16 @@ package data
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/google/uuid"
+	"github.com/dreamlu/w2socks/client/core"
 	"io/ioutil"
 	"os"
 )
 
 type Config struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	ServerIpAddr string `json:"server_ip_addr"`
-	LocalPort    string `json:"local_port"`
+	Name string `json:"name"`
+	core.W2Config
 }
 
 var Path = "./config.json"
@@ -30,41 +29,34 @@ func GetConfig() []*Config {
 // 存储配置文件
 func InsertConfig(con Config) error {
 	conf := GetConfig()
-	con.ID = uuid.New().String()
+	for _, v := range conf {
+		if con.W2Config.String() == v.W2Config.String() {
+			return errors.New("the same server_ip_addr and local_port existed")
+		}
+	}
 	conf = append(conf, &con)
 	return Write(Path, conf)
 }
 
 // 存储配置文件
-func UpdateConfig(con Config) error {
+func UpdateConfig(con Config, index int) error {
 	conf := GetConfig()
-	var idx = -1
 	for k, v := range conf {
-		if con.ID == v.ID {
-			idx = k
+		if con.W2Config.String() == v.W2Config.String() && k != index {
+			return errors.New("the same server_ip_addr and local_port existed")
 		}
 	}
-	if idx != -1 {
-		conf[idx] = &con
-	} else {
-		return nil
-	}
+	conf[index] = &con
 	return Write(Path, conf)
 }
 
 // 存储配置文件
-func DeleteConfig(id string) error {
+func DeleteConfig(con Config) error {
 	conf := GetConfig()
-	var idx = -1
 	for k, v := range conf {
-		if id == v.ID {
-			idx = k
+		if con.W2Config.String() == v.W2Config.String() {
+			conf = append(conf[:k], conf[k+1:]...)
 		}
-	}
-	if idx != -1 {
-		conf = append(conf[:idx], conf[idx+1:]...)
-	} else {
-		return nil
 	}
 	return Write(Path, conf)
 }
@@ -75,8 +67,7 @@ func Read(filename string, v interface{}) error {
 	if err != nil {
 		return err
 	}
-	dataStr := string(data)
-	if dataStr == "" {
+	if string(data) == "" {
 		return fmt.Errorf("配置文件为空")
 	}
 	return json.Unmarshal(data, v)
