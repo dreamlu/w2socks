@@ -20,5 +20,8 @@ func main() {
 			return
 		}
 	}
-	core.Core(i, p)
+	core.Core(&core.W2Config{
+		ServerIpAddr: i,
+		LocalPort:    p,
+	})
 }
