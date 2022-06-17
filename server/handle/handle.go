@@ -2,12 +2,14 @@ package handle
 
 import (
 	"encoding/binary"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
 	"net"
 )
 
+// Handle socks5: https://jiajunhuang.com/articles/2019_06_06-socks5.md.html
 func Handle(ws *websocket.Conn) {
 
 	//defer ws.Close()
@@ -19,45 +21,51 @@ func Handle(ws *websocket.Conn) {
 		log.Println(err)
 		return
 	}
-	if b[0] == 0x05 {
-		log.Println("socks5")
+	if b[0] != 0x05 {
+		log.Println("error: not socks5 protocol")
+		return
 	}
-	log.Println(b)
 
-	_, _ = client.Write([]byte{0x05, 0x00})
-	log.Println(b)
+	// 告诉client无需认证
+	_, err = client.Write([]byte{0x05, 0x00})
+	if err != nil {
+		log.Println(fmt.Sprintf("error:%s", err))
+		return
+	}
 
 	// 获取真正的远程服务的地址
 	n, err := client.Read(b)
-	// n 最短的长度为7 情况为 ATYP=3 DST.ADDR占用1字节 值为0x0
+	// n 最短的长度为7 情况为 ATYP=3 ipv4值为0x01, DST.ADDR占用4字节
 	if err != nil || n < 7 {
 		return
 	}
-	log.Println(b)
-
-	var dIP []byte
-	// aType 代表请求的远程服务器地址类型，值长度1个字节，有三种类型
+	var addr []byte
+	// ATYP 是目标地址类型，有如下取值：
+	// 0x01 IPv4
+	// 0x03 域名
+	// 0x04 IPv6
+	// DST.ADDR 就是目标地址的值了，如果是IPv4，那么就是4 bytes，如果是IPv6那么就是16 bytes，如果是域名，那么第一个字节代表 接下来有多少个字节是表示目标地址
 	switch b[3] {
 	case 0x01:
 		//	IP V4 address: X'01'
-		dIP = b[4 : 4+net.IPv4len]
+		addr = b[4 : 4+net.IPv4len]
 	case 0x03:
 		//	DOMAINNAME: X'03'
 		ipAddr, err := net.ResolveIPAddr("ip", string(b[5:n-2]))
 		if err != nil {
 			return
 		}
-		dIP = ipAddr.IP
+		addr = ipAddr.IP
 	case 0x04:
 		//	IP V6 address: X'04'
-		dIP = b[4 : 4+net.IPv6len]
+		addr = b[4 : 4+net.IPv6len]
 	default:
 		return
 	}
 
 	dPort := b[n-2:]
 	dstAddr := &net.TCPAddr{
-		IP:   dIP,
+		IP:   addr,
 		Port: int(binary.BigEndian.Uint16(dPort)),
 	}
 
@@ -68,41 +76,28 @@ func Handle(ws *websocket.Conn) {
 		return
 	}
 
-	// ===== 进行连接 ====
+	// ===== 建立连接 ====
 	// 连接服务
 	server, err := net.DialTCP("tcp", nil, dstAddr)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	defer server.Close()
-	//if req.Method == "CONNECT" {
-	//	fmt.Fprint(client, "HTTP/1.1 200 Connection established\r\n")
-	//} else {
-	//	server.Write(b[:n])
-	//}
+	defer func() {
+		_ = server.SetLinger(0)
+		server.Close()
+		client.Close()
+	}()
 	// Conn被关闭时直接清除所有数据 不管没有发送的数据
-	_ = server.SetLinger(0)
 	// 响应客户端连接成功
 	_, _ = client.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
-	// 响应客户端连接成功
-	//server.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 	// 进行转发
 	// 从server接收数据,返回本地
 	go io.Copy(server, client)
-	io.Copy(client, server)
-	//go func() {
-	//
-	//	err := send(client, server)
-	//	if err != nil {
-	//		// 在 copy 的过程中可能会存在网络超时等 error 被 return，只要有一个发生了错误就退出本次工作
-	//		//client.Close()
-	//		server.Close()
-	//	}
-	//}()
-	//// 从server->client,渲染
-	//receive(client, server)
-	//log.Println("转发结束")
+	_, err = io.Copy(client, server)
+	if err == nil {
+		client.Write([]byte(io.EOF.Error()))
+	}
 }
 
 // 源源不断的接收数据

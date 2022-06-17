@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"fmt"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -16,9 +15,7 @@ import (
 )
 
 var (
-	//Online int
 	Ws = map[string]W2socks{}
-	Wt = map[string][]*W2socket{}
 )
 
 type W2Config struct {
@@ -35,13 +32,13 @@ type W2socks struct {
 	context.CancelFunc
 }
 
-// websocket
+// W2socket websocket
 type W2socket struct {
 	*websocket.Conn
 	port string
 }
 
-// client
+// Core client
 func Core(wc *W2Config) {
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = context.WithValue(ctx, "localPort", wc.LocalPort)
@@ -52,11 +49,11 @@ func Core(wc *W2Config) {
 	}
 	//context.WithDeadline()
 	go telnetLocal(wc.LocalPort)
-	listen(ctx, wc.ServerIpAddr, wc.LocalPort)
+	listen(wc.ServerIpAddr, wc.LocalPort)
 }
 
 // client listen
-func listen(ctx context.Context, ipAddr, localPort string) {
+func listen(ipAddr, localPort string) {
 	// 启动监听
 	LocalListenAddr, err := net.ResolveTCPAddr("tcp", ":"+localPort)
 	if err != nil {
@@ -65,51 +62,34 @@ func listen(ctx context.Context, ipAddr, localPort string) {
 	}
 	l, err := net.ListenTCP("tcp", LocalListenAddr)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	defer l.Close()
 
+	// 建立websocket通道
 	for {
 		ws := websockets(ipAddr)
-		ws.port = localPort
-		Wt[localPort] = append(Wt[localPort], ws)
-		conn, _ := l.Accept()
-		select {
-		case <-ctx.Done():
-			CloseContext(ctx, l)
-			//ws.Close()
-			fmt.Printf("旧线程结束\n")
+		// 新的请求
+		conn, _ := l.AcceptTCP()
+		//conn.SetReadDeadline(time.Now().Add(time.Second * 2))
+		if conn == nil {
 			return
-		default:
-			if conn == nil {
-				return
-			}
-			go socks2ws(conn.(*net.TCPConn), ws.Conn)
 		}
-	}
-}
-
-// 建立websocket连接
-func websockets(ipAddr string) *W2socket {
-	u := url.URL{Scheme: "ws", Host: ipAddr, Path: "/"}
-	log.Printf("connecting to %s", u.String())
-
-	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	if err != nil {
-		log.Fatal("dial:", err)
-	}
-	return &W2socket{
-		Conn: ws,
+		go socks2ws(conn, ws)
 	}
 }
 
 // 1.处理本机的代理请求
-// 2.与server建立websocket连接
+// 2.与server进行数据通信
 func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 
-	defer ws.Close()
+	defer func() {
+		log.Println("ws该次连接关闭")
+		ws.Close()
+	}()
 	var wg sync.WaitGroup
 	ioCopy := func(dst io.Writer, src io.Reader) {
+		log.Println("数据通信")
 		defer wg.Done()
 		io.Copy(dst, src)
 	}
@@ -119,18 +99,16 @@ func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 	wg.Wait()
 }
 
-// close
-func CloseContext(ctx context.Context, l *net.TCPListener) {
+// 建立websocket连接
+func websockets(ipAddr string) *websocket.Conn {
+	u := url.URL{Scheme: "ws", Host: ipAddr, Path: "/"}
+	log.Printf("connecting to %s", u.String())
 
-	localPort := ctx.Value("localPort").(string)
-	for _, v := range Wt {
-		for _, v2 := range v {
-			if v2.port == localPort {
-				v2.UnderlyingConn().Close()
-			}
-		}
+	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	if err != nil {
+		log.Fatal("dial:", err)
 	}
-	l.Close()
+	return ws
 }
 
 // telnet local

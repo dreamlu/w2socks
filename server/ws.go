@@ -13,7 +13,7 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-// 消息读取
+// WsHandler 消息读取
 // 开启不同进程代表对应的客户端通信
 func WsHandler(ws *websocket.Conn) {
 

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	var i, p string
-	flag.StringVar(&i, "i", "", "远程连接地址")
+	flag.StringVar(&i, "i", "", "远程连接地址(包含端口)")
 	flag.StringVar(&p, "p", "8018", "本地监听端口")
 	flag.Parse()
 	// 尝试从环境变量获取参数
