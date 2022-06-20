@@ -14,14 +14,14 @@ websocket + sockets代理工具
 1.客户端:  
 `go run main.go -i your_server_ip:8018 -p 8018`  
 
-### GUI  
-> 依赖: 待测试  
+### GUI 客户端  
+- [release](https://github.com/dreamlu/w2socks/releases)  
+- cd client && go build
 
-[客户端](https://github.com/dreamlu/w2socks/releases)  
 
 ![架构图](./snapshot/1.png)
 
 TODO  
 - [x] 1.跨平台客户端  
-- [ ] 2.主界面内容刷新
-- [ ] 3.即时断开连接问题
+- [x] 2.主界面内容刷新
+- [x] 3.即时断开连接问题
