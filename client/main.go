@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fyne.io/systray"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui"
 	"github.com/dreamlu/w2socks/client/gui/global"
-	"github.com/getlantern/systray"
 )
 
 // 开发环境: ubuntu
@@ -18,7 +18,6 @@ func main() {
 		Window:  gui.Gui(),
 		Refresh: make(chan byte),
 	}
-	global.G.Show()
 	go systray.Run(onReady, nil)
 	global.G.ShowAndRun()
 }

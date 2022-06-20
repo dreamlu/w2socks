@@ -1,21 +1,21 @@
 package global
 
 import (
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
+	"fyne.io/systray"
 	"github.com/dreamlu/w2socks/client/data"
-	"github.com/getlantern/systray"
 )
 
 var (
-	// 全局
+	// G 全局
 	// 主界面
 	G Window
 
-	// 全局
+	// CONFIG 全局
 	// 选中/右键文本赋值
 	CONFIG CONGIG
 
-	// 系统托盘
+	// Mmin 系统托盘
 	Mmin *systray.MenuItem
 )
 

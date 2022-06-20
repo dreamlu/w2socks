@@ -19,7 +19,5 @@ func WsHandler(ws *websocket.Conn) {
 
 	defer ws.Close()
 	//消息读取,每个客户端数据
-	for {
-		handle.Handle(ws)
-	}
+	handle.Handle(ws)
 }

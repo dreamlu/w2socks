@@ -14,8 +14,10 @@ func Handle(ws *websocket.Conn) {
 
 	//defer ws.Close()
 	client := ws.UnderlyingConn()
+	defer client.Close()
+	defer ws.Close()
 	b := make([]byte, 256)
-	// 读取本机的代理请求内容
+	// 读取代理请求内容
 	_, err := client.Read(b)
 	if err != nil {
 		log.Println(err)
@@ -86,7 +88,6 @@ func Handle(ws *websocket.Conn) {
 	defer func() {
 		_ = server.SetLinger(0)
 		server.Close()
-		client.Close()
 	}()
 	// Conn被关闭时直接清除所有数据 不管没有发送的数据
 	// 响应客户端连接成功

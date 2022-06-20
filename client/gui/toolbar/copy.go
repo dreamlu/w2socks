@@ -1,8 +1,8 @@
 package toolbar
 
 import (
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	copy2 "github.com/dreamlu/w2socks/client/util/copy"
 )
 

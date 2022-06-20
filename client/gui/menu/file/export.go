@@ -1,8 +1,8 @@
 package file
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/dialog"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
 	"github.com/dreamlu/w2socks/client/gui/global"
 	"log"
 )

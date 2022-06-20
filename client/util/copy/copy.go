@@ -2,7 +2,7 @@ package copy
 
 import (
 	"encoding/json"
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/util/notify"
 )

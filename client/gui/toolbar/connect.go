@@ -1,8 +1,8 @@
 package toolbar
 
 import (
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 	"github.com/dreamlu/w2socks/client/gui/global"
 	"github.com/dreamlu/w2socks/client/gui/window"
 	"github.com/dreamlu/w2socks/client/util/notify"

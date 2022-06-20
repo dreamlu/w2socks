@@ -2,8 +2,9 @@ package window
 
 import (
 	"fmt"
-	"fyne.io/fyne"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 	"github.com/dreamlu/w2socks/client/core"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui/global"
@@ -91,8 +92,8 @@ func OpenWindow(conf *data.Config, add bool) fyne.Window {
 	}
 
 	// 窗体
-	content := widget.NewVBox(
-		widget.NewVBox(
+	content := container.NewVBox(
+		container.NewVBox(
 			// 输入服务端的ip地址和端口 以及本地的端口
 			widget.NewLabel("Please Enter:"),
 			form,

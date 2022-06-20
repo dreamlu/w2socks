@@ -3,8 +3,8 @@ package text
 import (
 	"image/color"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/theme"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/theme"
 )
 
 // BaseRenderer is a renderer base providing the most common implementations of a part of the

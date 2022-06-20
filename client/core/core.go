@@ -48,7 +48,7 @@ func Core(wc *W2Config) {
 		CancelFunc: cancel,
 	}
 	//context.WithDeadline()
-	go telnetLocal(wc.LocalPort)
+	//go telnetLocal(wc.LocalPort)
 	listen(wc.ServerIpAddr, wc.LocalPort)
 }
 
@@ -66,15 +66,16 @@ func listen(ipAddr, localPort string) {
 	}
 	defer l.Close()
 
-	// 建立websocket通道
+	// 原理: 原先的每一次的http连接用websocket连接替代
 	for {
+		// 预先建立websocket通道
 		ws := websockets(ipAddr)
 		// 新的请求
 		conn, _ := l.AcceptTCP()
-		//conn.SetReadDeadline(time.Now().Add(time.Second * 2))
 		if conn == nil {
-			return
+			continue
 		}
+		//conn.SetReadDeadline(time.Now().Add(time.Second * 2))
 		go socks2ws(conn, ws)
 	}
 }

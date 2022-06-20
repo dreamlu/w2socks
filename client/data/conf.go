@@ -28,14 +28,14 @@ func GetConfig() []*Config {
 
 // 存储配置文件
 func InsertConfig(con Config) error {
-	conf := GetConfig()
-	for _, v := range conf {
+	confs := GetConfig()
+	for _, v := range confs {
 		if con.W2Config.String() == v.W2Config.String() {
 			return errors.New("the same server_ip_addr and local_port existed")
 		}
 	}
-	conf = append(conf, &con)
-	return Write(Path, conf)
+	confs = append([]*Config{&con}, confs...)
+	return Write(Path, confs)
 }
 
 // 存储配置文件

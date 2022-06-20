@@ -2,12 +2,12 @@ package gui
 
 import (
 	"fmt"
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"github.com/dreamlu/w2socks/client/data"
 	"github.com/dreamlu/w2socks/client/gui/cuscom/text"
 	"github.com/dreamlu/w2socks/client/gui/global"
@@ -44,7 +44,7 @@ func mainList() []fyne.CanvasObject {
 	// 获取本地配置并加载到容器
 	conf := data.GetConfig()
 	for k, v := range conf {
-		item := widget.NewVBox(
+		item := container.NewVBox(
 			text.NewSelectClickText(fmt.Sprintf("%s\n%s", v.Name, v.ServerIpAddr), *v, k),
 			canvas.NewLine(color.Black),
 		)
@@ -55,10 +55,10 @@ func mainList() []fyne.CanvasObject {
 
 // 主界面
 func Content() fyne.CanvasObject {
-	top := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), toolbar.Toolbar())
+	top := container.New(layout.NewVBoxLayout(), toolbar.Toolbar())
 	list := []fyne.CanvasObject{top}
 	list = append(list, mainList()...)
-	vert := widget.NewVScrollContainer(widget.NewVBox(list...))
+	vert := container.NewVScroll(container.NewVBox(list...))
 	return vert
 }
 
