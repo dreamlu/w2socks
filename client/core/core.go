@@ -62,7 +62,7 @@ func listen(ipAddr, localPort string) {
 	}
 	l, err := net.ListenTCP("tcp", LocalListenAddr)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("listen tcp error: ", err)
 	}
 	defer l.Close()
 
@@ -107,7 +107,10 @@ func websockets(ipAddr string) *websocket.Conn {
 
 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("dial:", err)
+		log.Println("dial error:", err)
+		log.Println("trying after 3s")
+		time.Sleep(3 * time.Second)
+		return websockets(ipAddr)
 	}
 	return ws
 }
