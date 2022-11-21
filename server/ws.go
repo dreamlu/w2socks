@@ -16,8 +16,6 @@ var upGrader = websocket.Upgrader{
 // WsHandler 消息读取
 // 开启不同进程代表对应的客户端通信
 func WsHandler(ws *websocket.Conn) {
-
-	defer ws.Close()
 	//消息读取,每个客户端数据
 	handle.Handle(ws)
 }

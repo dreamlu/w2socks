@@ -12,10 +12,8 @@ import (
 // Handle socks5: https://jiajunhuang.com/articles/2019_06_06-socks5.md.html
 func Handle(ws *websocket.Conn) {
 
-	//defer ws.Close()
-	client := ws.UnderlyingConn()
-	defer client.Close()
 	defer ws.Close()
+	client := ws.UnderlyingConn()
 	b := make([]byte, 256)
 	// 读取代理请求内容
 	_, err := client.Read(b)

@@ -20,6 +20,8 @@ func main() {
 			return
 		}
 	}
+	log.Printf("local listen port: %s", p)
+	log.Printf("server addr: %s", i)
 	core.Core(&core.W2Config{
 		ServerIpAddr: i,
 		LocalPort:    p,

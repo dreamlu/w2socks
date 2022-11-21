@@ -85,12 +85,12 @@ func listen(ipAddr, localPort string) {
 func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 
 	defer func() {
-		log.Println("ws该次连接关闭")
+		log.Println("ws close the session")
 		ws.Close()
 	}()
 	var wg sync.WaitGroup
 	ioCopy := func(dst io.Writer, src io.Reader) {
-		log.Println("数据通信")
+		log.Println("copy data")
 		defer wg.Done()
 		io.Copy(dst, src)
 	}
@@ -103,8 +103,6 @@ func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 // 建立websocket连接
 func websockets(ipAddr string) *websocket.Conn {
 	u := url.URL{Scheme: "ws", Host: ipAddr, Path: "/"}
-	log.Printf("connecting to %s", u.String())
-
 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Println("dial error:", err)

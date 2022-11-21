@@ -8,7 +8,7 @@ websocket + sockets代理工具
 1.服务端  
 `docker run -p 8018:8018 -d --name w2socks-server registry.cn-hangzhou.aliyuncs.com/dreamlu/common:w2socks-server`  
 2.客户端  
-`docker run -p 8018:8018 -e IP_ADDR=your_server_ip:8018 registry.cn-hangzhou.aliyuncs.com/dreamlu/common:w2socks-client`  
+`docker run -p 8018:8018 -d --name w2socks-client -e IP_ADDR=your_server_ip:8018 registry.cn-hangzhou.aliyuncs.com/dreamlu/common:w2socks-client`  
 
 #### go  
 1.客户端:  
