@@ -1,13 +1,18 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 )
 
 func main() {
+	var p string
+	flag.StringVar(&p, "p", "8018", "本地监听端口")
+	flag.Parse()
+	log.Printf("local listen port: %s", p)
 	http.HandleFunc("/", httpServer)
-	err := http.ListenAndServe(":8018", nil)
+	err := http.ListenAndServe(":"+p, nil)
 	if err != nil {
 		log.Println("ListenAndServe error: ", err)
 	}

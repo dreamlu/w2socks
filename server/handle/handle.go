@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"sync"
 )
 
 // Handle socks5: https://jiajunhuang.com/articles/2019_06_06-socks5.md.html
@@ -14,7 +15,7 @@ func Handle(ws *websocket.Conn) {
 
 	defer ws.Close()
 	client := ws.UnderlyingConn()
-	b := make([]byte, 256)
+	b := make([]byte, 1024)
 	// 读取代理请求内容
 	_, err := client.Read(b)
 	if err != nil {
@@ -22,7 +23,7 @@ func Handle(ws *websocket.Conn) {
 		return
 	}
 	if b[0] != 0x05 {
-		log.Println("error: not socks5 protocol")
+		log.Println("err not socks5 protocol")
 		return
 	}
 
@@ -92,11 +93,23 @@ func Handle(ws *websocket.Conn) {
 	_, _ = client.Write([]byte{0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
 	// 进行转发
 	// 从server接收数据,返回本地
-	go io.Copy(server, client)
-	_, err = io.Copy(client, server)
-	if err == nil {
-		client.Write([]byte(io.EOF.Error()))
+	var wg sync.WaitGroup
+	ioCopy := func(opt string, dst io.Writer, src io.Reader) {
+		log.Println("server", opt, "data")
+		defer wg.Done()
+		_, err := io.Copy(dst, src)
+		if err != nil {
+			log.Println("err", err.Error())
+			return
+		}
+		if opt == "send" {
+			client.Write([]byte(io.EOF.Error()))
+		}
 	}
+	wg.Add(2)
+	go ioCopy("receive", server, client)
+	go ioCopy("send", client, server)
+	wg.Wait()
 }
 
 // 源源不断的接收数据

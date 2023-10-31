@@ -68,13 +68,13 @@ func listen(ipAddr, localPort string) {
 
 	// 原理: 原先的每一次的http连接用websocket连接替代
 	for {
-		// 预先建立websocket通道
-		ws := websockets(ipAddr)
 		// 新的请求
 		conn, _ := l.AcceptTCP()
 		if conn == nil {
 			continue
 		}
+		// 建立websocket通道
+		ws := websockets(ipAddr)
 		//conn.SetReadDeadline(time.Now().Add(time.Second * 2))
 		go socks2ws(conn, ws)
 	}
@@ -89,14 +89,17 @@ func socks2ws(socks *net.TCPConn, ws *websocket.Conn) {
 		ws.Close()
 	}()
 	var wg sync.WaitGroup
-	ioCopy := func(dst io.Writer, src io.Reader) {
-		log.Println("copy data")
+	ioCopy := func(opt string, dst io.Writer, src io.Reader) {
+		log.Println("client", opt, "data")
 		defer wg.Done()
-		io.Copy(dst, src)
+		_, err := io.Copy(dst, src)
+		if err != nil {
+			log.Println("err", err.Error())
+		}
 	}
 	wg.Add(2)
-	go ioCopy(ws.UnderlyingConn(), socks)
-	go ioCopy(socks, ws.UnderlyingConn())
+	go ioCopy("send", ws.UnderlyingConn(), socks)
+	go ioCopy("receive", socks, ws.UnderlyingConn())
 	wg.Wait()
 }
 
